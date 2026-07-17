@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ckg-nvidia-nemoclaw"
-version = "0.2.0"
+version = "0.3.0"
 description = "NVIDIA NemoClaw as a traversable knowledge graph — sandboxed AI agent infrastructure, OpenShell runtime, inference routing, and network policy — MCP-native"
 readme = "README.md"
 license = { text = "MIT" }
@@ -27,8 +27,12 @@ classifiers = [
 requires-python = ">=3.11"
 dependencies = ["mcp[cli]>=1.0.0"]
 
+[project.optional-dependencies]
+serve = ["starlette>=0.41.0", "uvicorn>=0.30.0", "fastmcp>=0.4.0"]
+
 [project.scripts]
 ckg-nvidia-nemoclaw = "ckg_nvidia_nemoclaw.server:main"
+ckg-nvidia-nemoclaw-serve = "ckg_nvidia_nemoclaw.serve:main"
 
 [project.urls]
 Homepage = "https://graphifymd.com"

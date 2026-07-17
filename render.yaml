@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: ckg-nvidia-nemoclaw
+    runtime: python
+    buildCommand: pip install -e ".[serve]"
+    startCommand: python -m ckg_nvidia_nemoclaw.serve
+    plan: free
+    envVars:
+      - key: PORT
+        generateValue: true
