@@ -153,22 +153,57 @@ When those agents run inside NemoClaw's blast radius, they need to reason about 
 
 ---
 
-## Why small models specifically
+## A/B test — NemoClaw domain, local models, no GPU
 
-Large models fake domain competence. Small models guess. A 7B model reasoning about NemoClaw's inference routing or security policy tiers without structured context isn't hallucinating — it's producing statistical patterns that weren't dense enough in training to stick.
+We ran 30 real questions drawn from GitHub issues, HN pain points, and the NemoClaw CKG — same questions, same model, with and without CKG injected. CPU only, Ollama, temperature 0.
 
-CKG injects the **declared structure** of the domain directly into context. The model stops guessing, starts traversing.
+**Domain category results (excluding control questions):**
 
-**Local A/B test — CPU only, Ollama, same harness, no GPU:**
+| Category | nemotron bare | nemotron + CKG | Lift |
+|----------|---------------|----------------|------|
+| Lookup | 0.100 | 0.171 | **+71%** |
+| Multi-hop | 0.058 | 0.100 | **+73%** |
+| Prereq-chain | 0.077 | 0.156 | **+103%** |
+| Key-fact accuracy | 9.3% | 22.3% | **+13pp** |
 
-| Model | Bare F1 | + CKG F1 | Lift |
-|-------|---------|----------|------|
-| phi4-mini (2.5 GB) | 0.047 | 0.325 | **+598%** |
-| nemotron-mini (4B) | 0.174 | 0.412 | **+137%** |
+**The bare model doesn't know NemoClaw exists.**
 
-phi4-mini + CKG (0.325) beats nemotron-mini bare (0.174) by **86%**. A 2.5 GB laptop model with a graph outperforms a 4B specialized model without one.
+```
+Q: What are the three agent runtimes in NemoClaw?
 
-CKG is also faster: 4.4s average vs 6.7s bare — the graph stops hallucinated generation before it starts.
+✗ Bare:  "NemoClaw supports TensorFlow, PyTorch, and ONNX Runtime..."
+         [invented from general ML knowledge]
+
+✓ CKG:   "OpenClaw (default), Hermes (NEMOCLAW_AGENT=hermes),
+          LangChain Deep Agents (NEMOCLAW_AGENT=dcode)"
+         [declared edges, correct]
+```
+
+```
+Q: How does CorporateCA integrate into NemoClaw's security chain?
+
+✗ Bare:  "CorporateCA, a cloud-native IAM solution from NVIDIA, can be
+          integrated to enhance security posture..."
+         [hallucinated — CorporateCA is not an NVIDIA IAM product]
+
+✓ CKG:   "CorporateCA is anchored at the image build stage for TLS
+          interception proxy traversal in NemoClaw."
+         [exact mechanism, correct integration point]
+```
+
+```
+Q: What enterprise manufacturing deployment uses NemoClaw via the FOX Blueprint?
+
+✗ Bare:  "...FOX (Flexible Open-Source Object Tracking) Blueprint..."
+         [invented acronym expansion, no mention of Foxconn]
+
+✓ CKG:   "Foxconn's MoMClaw is a production deployment of the FOX Blueprint."
+         [correct]
+```
+
+**Context window note:** phi4-mini and nemotron-mini truncate at ~2,050 tokens. The NemoClaw CKG is 6,837 tokens — only 30% of the graph is loading. Prereq-chain F1 still doubles on that fraction. Full-context models would widen the gap further.
+
+Full report: `~/projects/ckg-ab-test/results/REPORT_nemoclaw.md`
 
 ---
 
