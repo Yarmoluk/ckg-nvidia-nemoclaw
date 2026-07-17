@@ -23,6 +23,56 @@
 
 ---
 
+## The graph
+
+```mermaid
+graph TD
+    NC[NemoClaw] --> OS[OpenShell]
+    NC --> OC[OpenClaw]
+    NC --> HM[Hermes]
+    NC --> LC[LangChain Deep Agents]
+    NC --> MCP[ManagedMCPServer]
+    NC --> AH[AgentHeartbeat]
+
+    OC --> PTD[ProgressiveToolDisclosure]
+    HM --> PTD
+    LC --> PTD
+
+    OS --> L7[L7Proxy]
+    OS --> LL[LandlockLSM]
+    OS --> CP[CONNECT_Proxy]
+
+    L7 --> SG[SharedGateway]
+    SG --> IP[InferenceProvider]
+    IP --> vLLM[vLLM]
+    IP --> OLL[Ollama]
+    IP --> NIM[NIM_Local]
+    IP --> MR[ModelRouter]
+
+    MCP --> NP[NetworkPolicy]
+    MCP --> L7
+
+    NP --> PT[PolicyTier]
+    NP --> PP[PolicyPreset]
+    PP --> TG[Telegram]
+    PP --> DC[Discord]
+    PP --> SL[Slack]
+
+    SH[SecurityHardening] --> SB[Sandbox]
+    SH --> LL
+    SH --> BP[NemoClaw_Blueprint]
+
+    NIM --> DGX[DGX_Spark]
+
+    style NC fill:#0f6e56,color:#fff
+    style PTD fill:#1a5c47,color:#fff
+    style SH fill:#1a5c47,color:#fff
+    style NP fill:#1a5c47,color:#fff
+    style IP fill:#2d7a5e,color:#fff
+```
+
+---
+
 ## What developers are actually hitting
 
 Across GitHub issues, HN threads, and hands-on walkthroughs, three NemoClaw pain signals dominate:
