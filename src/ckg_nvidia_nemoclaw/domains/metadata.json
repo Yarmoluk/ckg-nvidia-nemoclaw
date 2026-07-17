@@ -1,0 +1,7 @@
+{
+  "nemoclaw": {
+    "nodes": 55,
+    "edges": 74,
+    "description": "NVIDIA NemoClaw — sandboxed AI agent infrastructure covering OpenShell runtime, agent types, inference routing, network policy, security architecture, deployment paths, and ecosystem integrations"
+  }
+}
