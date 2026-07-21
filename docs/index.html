@@ -1,0 +1,738 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta property="og:title" content="ckg-nvidia-nemoclaw — NemoClaw as a traversable knowledge graph">
+<meta property="og:description" content="Community-built knowledge graph for NemoClaw. Source-grounded answers for platform engineers and agent developers.">
+<meta property="og:image" content="https://raw.githubusercontent.com/Yarmoluk/ckg-nvidia-nemoclaw/main/assets/og.png">
+<title>ckg-nvidia-nemoclaw — README</title>
+<style>
+:root {
+  --bg:#fbfbf9; --surf:#fff; --surf2:#f6f5ef; --bdr:#e6e4da; --bdr2:#d8d5c8;
+  --ink:#13201c; --mid:#6b7570; --sub:#8a938e;
+  --acc:#0f6e56; --acc-hi:#0c5a46; --acc-bg:rgba(15,110,86,.08);
+  --red:#c92a2a; --red-bg:rgba(201,42,42,.08);
+  --code-bg:#0d1117; --code-txt:#e6edf3; --code-bdr:#30363d;
+  --f-head:'Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-body:'Segoe UI',system-ui,-apple-system,sans-serif;
+  --f-mono:ui-monospace,'SFMono-Regular',Menlo,Consolas,monospace;
+
+  /* layer colors */
+  --c-root:#0f6e56; --c-agent:#2563eb; --c-sec:#c92a2a;
+  --c-inf:#7c3aed; --c-pol:#b45309; --c-feat:#0e7490;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#0d1117; --surf:#161b22; --surf2:#21262d; --bdr:#30363d; --bdr2:#3d444d;
+  --ink:#e6edf3; --mid:#8b949e; --sub:#6e7681;
+  --acc:#3fb950; --acc-hi:#56d364; --acc-bg:rgba(63,185,80,.1);
+  --red:#f85149; --red-bg:rgba(248,81,73,.1);
+  --code-bg:#010409; --code-txt:#e6edf3; --code-bdr:#21262d;
+  --c-root:#3fb950; --c-agent:#60a5fa; --c-sec:#f87171;
+  --c-inf:#a78bfa; --c-pol:#fbbf24; --c-feat:#22d3ee;
+}}
+:root[data-theme=light]{--bg:#fbfbf9;--surf:#fff;--surf2:#f6f5ef;--bdr:#e6e4da;--bdr2:#d8d5c8;--ink:#13201c;--mid:#6b7570;--sub:#8a938e;--acc:#0f6e56;--acc-hi:#0c5a46;--acc-bg:rgba(15,110,86,.08);--red:#c92a2a;--red-bg:rgba(201,42,42,.08);--c-root:#0f6e56;--c-agent:#2563eb;--c-sec:#c92a2a;--c-inf:#7c3aed;--c-pol:#b45309;--c-feat:#0e7490;}
+:root[data-theme=dark]{--bg:#0d1117;--surf:#161b22;--surf2:#21262d;--bdr:#30363d;--bdr2:#3d444d;--ink:#e6edf3;--mid:#8b949e;--sub:#6e7681;--acc:#3fb950;--acc-hi:#56d364;--acc-bg:rgba(63,185,80,.1);--red:#f85149;--red-bg:rgba(248,81,73,.1);--c-root:#3fb950;--c-agent:#60a5fa;--c-sec:#f87171;--c-inf:#a78bfa;--c-pol:#fbbf24;--c-feat:#22d3ee;}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{font-size:15px;-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);line-height:1.7;padding:0 16px 80px}
+::selection{background:rgba(15,110,86,.2)}
+.w{max-width:860px;margin:0 auto;padding-top:44px}
+h1,h2,h3,h4{font-family:var(--f-head);color:var(--ink);text-wrap:balance;line-height:1.25;letter-spacing:-.01em}
+h1{font-size:1.85rem;font-weight:700}
+h2{font-size:1.1rem;font-weight:700;margin:44px 0 14px;padding-bottom:8px;border-bottom:1px solid var(--bdr)}
+h3{font-size:.95rem;font-weight:600;margin:20px 0 8px}
+p{margin:10px 0}
+a{color:var(--acc);text-decoration:none}
+a:hover{color:var(--acc-hi);text-decoration:underline}
+strong{font-weight:600}
+hr{border:none;border-top:1px solid var(--bdr);margin:36px 0}
+
+/* ── Header ── */
+.hd{text-align:center;padding-bottom:28px;border-bottom:1px solid var(--bdr);margin-bottom:4px}
+.hd-eye{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);margin-bottom:10px}
+.hd h1{margin-bottom:6px}
+.hd-tag{display:none}
+.hd-opener{font-size:14px;color:var(--ink);line-height:1.75;margin:12px auto 14px;max-width:680px;text-align:left}
+.not-callout{display:inline-block;background:var(--surf2);border:1px solid var(--bdr);border-left:2px solid var(--sub);border-radius:6px;padding:8px 14px;font-family:var(--f-mono);font-size:11.5px;color:var(--sub);margin:0 0 4px}
+.pip{display:inline-flex;align-items:center;gap:10px;background:var(--code-bg);border:1px solid var(--code-bdr);border-radius:7px;padding:9px 16px;font-family:var(--f-mono);font-size:13.5px;color:var(--code-txt);margin:14px 0 16px}
+.pip .$ {color:#8b949e;user-select:none}
+.pip .cmd{color:#a5d6ff}
+.pip .pkg{color:#a8d8a8}
+.hd-quote{font-family:var(--f-mono);font-size:11.5px;color:var(--sub);margin-bottom:18px;font-style:italic}
+.badges{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:16px}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;border-radius:4px;font-family:var(--f-mono);font-size:10.5px;background:var(--surf2);border:1px solid var(--bdr);color:var(--mid)}
+.badge.a{background:var(--acc-bg);border-color:rgba(15,110,86,.25);color:var(--acc)}
+.links{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.links a{font-size:13px;font-weight:500}
+
+/* ── Graph canvas ── */
+.graph-box{background:var(--surf);border:1px solid var(--bdr);border-radius:10px;overflow:hidden;position:relative;margin:4px 0 16px}
+#graph-canvas{display:block;width:100%;cursor:default}
+.graph-legend{display:flex;flex-wrap:wrap;gap:10px 18px;padding:10px 16px;border-top:1px solid var(--bdr);background:var(--surf2)}
+.leg-item{display:flex;align-items:center;gap:5px;font-family:var(--f-mono);font-size:10.5px;color:var(--mid)}
+.leg-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.graph-hint{font-family:var(--f-mono);font-size:10px;color:var(--sub);padding:6px 16px 0;text-align:right}
+
+/* ── Pain signals ── */
+.pain-grid{display:flex;flex-direction:column;gap:12px;margin:14px 0}
+.pain{background:var(--surf);border:1px solid var(--bdr);border-left:3px solid var(--acc);border-radius:8px;padding:16px 18px}
+.pain-id{font-family:var(--f-mono);font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--acc);margin-bottom:2px}
+.pain h3{margin:0 0 6px;font-size:.95rem}
+.pain p{margin:0;font-size:14px;color:var(--mid)}
+
+/* ── Code blocks ── */
+pre{background:var(--code-bg);border:1px solid var(--code-bdr);border-radius:8px;padding:16px 18px;overflow-x:auto;margin:12px 0;font-family:var(--f-mono);font-size:12.5px;line-height:1.65;color:var(--code-txt)}
+code{font-family:var(--f-mono);font-size:.875em;background:var(--surf2);border:1px solid var(--bdr);padding:1px 5px;border-radius:3px;color:var(--acc)}
+pre code{background:none;border:none;padding:0;font-size:inherit;color:inherit;border-radius:0}
+.cm{color:#8b949e} .kw{color:#a5d6ff} .st{color:#a8d8a8} .sy{color:#d2a8ff}
+.ex-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0}
+.ex-box h3{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--sub);margin:0 0 6px;padding-bottom:6px;border-bottom:1px solid var(--bdr)}
+
+/* ── Declared relationships section ── */
+.rel-intro{font-size:13.5px;color:var(--mid);margin:0 0 12px;line-height:1.7}
+.edge-types{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px 0}
+.et{background:var(--surf);border:1px solid var(--bdr);border-radius:8px;padding:13px 15px;border-left:3px solid var(--acc)}
+.et-name{font-family:var(--f-mono);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--acc);margin-bottom:4px}
+.et p{margin:0;font-size:13px;color:var(--mid)}
+.conf-box{background:var(--surf2);border:1px solid var(--bdr);border-radius:8px;padding:16px 18px;margin:12px 0}
+.conf-box h3{font-size:.95rem;margin:0 0 8px}
+.conf-box p{margin:0 0 6px;font-size:13.5px}
+.conf-box p:last-child{margin:0}
+.conf-compare{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0}
+.cc{padding:12px 14px;border-radius:7px;font-size:13px}
+.cc.rag{background:var(--red-bg);border:1px solid rgba(201,42,42,.2)}
+.cc.ckg{background:var(--acc-bg);border:1px solid rgba(15,110,86,.2)}
+.cc-head{font-family:var(--f-mono);font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;margin-bottom:6px}
+.cc.rag .cc-head{color:var(--red)}
+.cc.ckg .cc-head{color:var(--acc)}
+.cc p{margin:0;color:var(--mid)}
+/* ── A/B stats ── */
+.ab-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0}
+.ab-stat{background:var(--surf);border:1px solid var(--bdr);border-radius:8px;padding:14px 16px;text-align:center}
+.ab-stat.hero{border-color:var(--acc);box-shadow:0 0 0 1px rgba(15,110,86,.15)}
+.ab-num{font-family:var(--f-mono);font-size:1.7rem;font-weight:700;color:var(--acc);letter-spacing:-.02em;line-height:1}
+.ab-stat.warn .ab-num{color:var(--mid)}
+.ab-lbl{font-family:var(--f-mono);font-size:9.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--sub);margin-top:5px;line-height:1.3}
+.ab-note{font-size:13px;color:var(--mid);margin:6px 0 14px;padding:10px 14px;background:var(--surf2);border-radius:6px;border-left:2px solid var(--bdr2)}
+
+/* ── Comparison examples ── */
+.ex-block{margin:14px 0;border:1px solid var(--bdr);border-radius:9px;overflow:hidden}
+.ex-q{background:var(--surf2);padding:12px 16px;border-bottom:1px solid var(--bdr)}
+.ex-qid{font-family:var(--f-mono);font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--sub);margin-bottom:4px}
+.ex-q p{margin:0;font-size:14px;font-weight:500}
+.ex-ab{display:grid;grid-template-columns:1fr 1fr}
+.ex-col{padding:14px 16px}
+.ex-col.bad{border-right:1px solid var(--bdr);border-top:2px solid var(--red)}
+.ex-col.good{border-top:2px solid var(--acc)}
+.ex-head{font-family:var(--f-mono);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px}
+.ex-col.bad .ex-head{color:var(--red)}
+.ex-col.good .ex-head{color:var(--acc)}
+.ex-ans{font-family:var(--f-mono);font-size:12.5px;line-height:1.6;color:var(--code-txt);background:var(--code-bg);border-radius:6px;padding:10px 12px;margin-bottom:8px}
+.ex-why{font-size:12px;color:var(--sub);font-style:italic}
+
+/* ── Tables ── */
+.tw{overflow-x:auto;margin:12px 0;border-radius:8px;border:1px solid var(--bdr)}
+table{width:100%;border-collapse:collapse;font-size:13.5px}
+thead tr{background:var(--surf2)}
+th{padding:9px 13px;text-align:left;font-family:var(--f-mono);font-size:10px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--mid);border-bottom:1px solid var(--bdr)}
+td{padding:8px 13px;border-bottom:1px solid var(--bdr);vertical-align:top}
+tr:last-child td{border-bottom:none}
+tbody tr:nth-child(even){background:var(--surf2)}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.acc-v{color:var(--acc);font-weight:600;font-family:var(--f-mono)}
+
+/* ── Install ── */
+.install-url{display:flex;align-items:center;gap:10px;background:var(--surf2);border:1px solid var(--bdr);border-radius:7px;padding:11px 16px;font-family:var(--f-mono);font-size:12.5px;color:var(--acc);margin:10px 0;word-break:break-all}
+.install-url .lbl{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--sub);flex-shrink:0}
+
+/* ── Graph grid ── */
+.graph-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin:12px 0}
+.gg{background:var(--surf);border:1px solid var(--bdr);border-radius:8px;padding:13px 15px}
+.gg-lbl{font-family:var(--f-mono);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--sub);margin-bottom:5px}
+.gg p{margin:0;font-size:13px;color:var(--mid);line-height:1.6}
+
+/* ── Community pulse ── */
+.gh-issues{display:flex;flex-direction:column;gap:8px;margin:12px 0}
+.gh-issue{background:var(--surf);border:1px solid var(--bdr);border-radius:8px;padding:12px 15px;border-left:3px solid var(--bdr2)}
+.gh-issue.hot{border-left-color:var(--red)}
+.gh-num{font-family:var(--f-mono);font-size:10px;font-weight:600;color:var(--sub);margin-bottom:3px}
+.gh-title{font-size:13.5px;font-weight:500;margin-bottom:3px}
+.gh-body{font-size:12.5px;color:var(--mid)}
+.hn-themes{display:flex;flex-direction:column;gap:10px;margin:12px 0}
+.hn-theme{padding:12px 15px;background:var(--surf2);border-radius:8px;border-left:3px solid var(--acc)}
+.hn-theme h3{font-size:.88rem;margin:0 0 4px}
+.hn-theme p{margin:0;font-size:13px;color:var(--mid)}
+
+/* ── CTA ── */
+.cta{background:var(--acc-bg);border:1px solid rgba(15,110,86,.25);border-radius:10px;padding:26px 28px;margin:14px 0;display:flex;flex-direction:column;align-items:center;text-align:center;gap:12px}
+.cta h3{font-size:1.1rem;margin:0}
+.cta p{margin:0;font-size:13.5px;color:var(--mid);max-width:560px}
+.cta-btns{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.btn{display:inline-flex;align-items:center;padding:9px 20px;border-radius:7px;font-family:var(--f-mono);font-size:12.5px;font-weight:600;cursor:pointer;border:none;text-decoration:none;transition:opacity .15s}
+.btn.pri{background:var(--acc);color:#fff}
+.btn.pri:hover{opacity:.88;color:#fff;text-decoration:none}
+.btn.sec{background:var(--surf);border:1px solid var(--bdr);color:var(--ink)}
+.btn.sec:hover{background:var(--surf2);color:var(--ink);text-decoration:none}
+/* ── Benchmark footer ── */
+.bench{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.bc{background:var(--surf);border:1px solid var(--bdr);border-radius:8px;padding:15px 17px;text-align:center}
+.bc.hero{border-color:var(--acc);box-shadow:0 0 0 1px rgba(15,110,86,.2)}
+.bc-n{font-family:var(--f-mono);font-size:1.75rem;font-weight:700;color:var(--acc);letter-spacing:-.03em;line-height:1}
+.bc.dim .bc-n{color:var(--mid)}
+.bc-l{font-family:var(--f-mono);font-size:9.5px;font-weight:600;letter-spacing:.12em;text-transform:uppercase;color:var(--sub);margin-top:5px}
+.bc-sub{font-size:11.5px;color:var(--sub);margin-top:3px}
+.footer{text-align:center;margin-top:56px;padding-top:22px;border-top:1px solid var(--bdr);font-family:var(--f-mono);font-size:10.5px;color:var(--sub);letter-spacing:.06em}
+
+/* ── Responsive ── */
+@media(max-width:640px){
+  h1{font-size:1.45rem}
+  .ex-grid{grid-template-columns:1fr}
+  .ab-stats{grid-template-columns:1fr 1fr}
+  .ex-ab{grid-template-columns:1fr}
+  .ex-col.bad{border-right:none;border-bottom:1px solid var(--bdr)}
+  .graph-grid{grid-template-columns:1fr}
+  .bench{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+<body>
+<div class="w">
+
+<!-- HEADER -->
+<header class="hd">
+  <div class="hd-eye">Graphify.md · community-built · not affiliated with NVIDIA</div>
+  <h1>NemoClaw as a traversable<br>knowledge graph</h1>
+  <p class="hd-opener">Graphify.md is a community-built project, not affiliated with NVIDIA, that turns NemoClaw into a traversable knowledge graph for source-grounded lookup and dependency traversal. Built for platform engineers, agent developers, and docs teams who need deterministic answers about runtimes, policy, security, and deployment — with every result traceable to declared relationships rather than model inference.</p>
+  <div class="not-callout">Not a general-purpose semantic search layer — if it's not a declared edge, the graph doesn't return it.</div>
+  <div class="pip"><span class="$">$</span><span><span class="cmd">pip install</span> <span class="pkg">ckg-nvidia-nemoclaw</span></span></div>
+  <p class="hd-quote">"The graph doesn't guess — it traverses. Every answer traces to a declared edge."</p>
+  <div class="badges">
+    <span class="badge a">PyPI v0.3.0</span>
+    <span class="badge a">55 nodes · 74 edges</span>
+    <span class="badge a">F1 0.471 · 4× RAG</span>
+    <span class="badge a">KRB v0.6.2</span>
+    <span class="badge">MIT</span>
+    <span class="badge">Graphify.md</span>
+  </div>
+  <div class="links">
+    <a href="https://pypi.org/project/ckg-nvidia-nemoclaw/">PyPI</a>
+    <a href="https://github.com/Yarmoluk/ckg-nvidia-nemoclaw">GitHub</a>
+    <a href="https://github.com/Yarmoluk/ckg-benchmark/blob/main/paper/main.pdf">Benchmark paper</a>
+    <a href="https://huggingface.co/datasets/danyarm/ckg-benchmark">HF dataset</a>
+    <a href="https://ckg-nvidia-nemoclaw.onrender.com/mcp">MCP connector URL</a>
+    <a href="https://news.ycombinator.com/item?id=47427027">HN 47427027</a>
+    <a href="https://news.ycombinator.com/item?id=47435066">HN 47435066</a>
+    <a href="https://graphifymd.com">graphifymd.com</a>
+    <a href="https://graphifymd.com/pro/">Pro · 97 domains</a>
+    <a href="https://graphifymd.com/benchmark">Benchmark</a>
+  </div>
+</header>
+
+<!-- GRAPH -->
+<h2>The graph</h2>
+<p style="font-size:13px;color:var(--mid);margin:0 0 8px">55 nodes · 74 edges · hover to explore · colored by layer</p>
+<div class="graph-box">
+  <canvas id="graph-canvas" height="380"></canvas>
+  <div class="graph-legend">
+    <span class="leg-item"><span class="leg-dot" style="background:var(--c-root)"></span>Root</span>
+    <span class="leg-item"><span class="leg-dot" style="background:var(--c-agent)"></span>Agent</span>
+    <span class="leg-item"><span class="leg-dot" style="background:var(--c-sec)"></span>Security</span>
+    <span class="leg-item"><span class="leg-dot" style="background:var(--c-inf)"></span>Inference</span>
+    <span class="leg-item"><span class="leg-dot" style="background:var(--c-pol)"></span>Policy</span>
+    <span class="leg-item"><span class="leg-dot" style="background:var(--c-feat)"></span>Feature</span>
+  </div>
+</div>
+
+<!-- PAIN SIGNALS -->
+<h2>What developers are actually hitting</h2>
+<p style="font-size:13px;color:var(--mid);margin:0 0 10px">Signal from 123 GitHub issues, HN threads <a href="https://news.ycombinator.com/item?id=47427027">47427027</a> + <a href="https://news.ycombinator.com/item?id=47435066">47435066</a>, and hands-on walkthroughs.</p>
+<div class="pain-grid">
+  <div class="pain">
+    <div class="pain-id">01 — Context</div>
+    <h3>Context bloat in tool loops</h3>
+    <p>Agents forget tool schemas after loop iterations. The model re-infers NemoClaw's architecture on every query instead of reading declared structure.</p>
+  </div>
+  <div class="pain">
+    <div class="pain-id">02 — Burn</div>
+    <h3>"Which agent is burning my budget?"</h3>
+    <p>OpenShell makes token spend visible per agent for the first time. The next question is how to reduce it. CKG is that answer.</p>
+  </div>
+  <div class="pain">
+    <div class="pain-id">03 — Gap</div>
+    <h3>The Policy Source Gap</h3>
+    <p>NVIDIA's own OpenShell graph names this: the missing layer between the runtime policy engine and the structured knowledge agents need. We filled it.</p>
+  </div>
+</div>
+
+<!-- WHAT IT IS -->
+<h2>What it is</h2>
+<p>The full NemoClaw stack as a typed dependency graph. Pre-structured, traversable, deterministic. Served over MCP. No inference at query time.</p>
+<div class="ex-grid">
+  <div class="ex-box">
+    <h3>Deployment chain traversal</h3>
+<pre><span class="kw">get_prerequisites</span>(<span class="st">"ManagedMCPServer"</span>)
+
+→ ManagedMCPServer
+  ├─ [ENABLES]  NemoClaw
+  ├─ [REQUIRES] NetworkPolicy  <span class="cm">← root</span>
+  └─ [REQUIRES] L7Proxy
+       ├─ [IMPLEMENTS] OpenShell
+       └─ [REQUIRES] SharedGateway
+            └─ [IMPLEMENTS] InferenceProvider
+
+<span class="st">269 tokens · declared edges only</span>
+<span class="cm">RAG: ~2,982 tokens · probabilistic</span></pre>
+  </div>
+  <div class="ex-box">
+    <h3>Shared mechanism discovery</h3>
+<pre><span class="kw">query_ckg</span>(<span class="st">"ProgressiveToolDisclosure"</span>)
+
+← [IMPLEMENTS] OpenClaw
+← [IMPLEMENTS] Hermes
+← [IMPLEMENTS] LangChain_Deep_Agents
+
+<span class="st">All three runtimes share this mechanism.</span>
+<span class="cm">RAG returns three separate docs.</span>
+<span class="cm">The graph knows — it's a declared edge.</span></pre>
+  </div>
+</div>
+
+<!-- DECLARED RELATIONSHIPS -->
+<h2>Declared relationships, not confidence scores</h2>
+<p class="rel-intro">Every edge in the graph was extracted from a source document and given a type. There are no probabilistic weights, no cosine similarity scores, no confidence intervals. An edge either exists — declared, typed, sourced — or it doesn't. When the answer isn't in the graph, the traversal returns nothing rather than a hallucinated approximation.</p>
+
+<h3>Edge types</h3>
+<div class="edge-types">
+  <div class="et">
+    <div class="et-name">REQUIRES</div>
+    <p>Hard prerequisite. A cannot function without B. Used for build-time and runtime dependencies — e.g., <code>OpenShell REQUIRES L7Proxy</code>.</p>
+  </div>
+  <div class="et">
+    <div class="et-name">ENABLES</div>
+    <p>Capability unlock. A makes B possible but B can exist without A in degraded form — e.g., <code>ManagedMCPServer ENABLES NetworkPolicy</code>.</p>
+  </div>
+  <div class="et">
+    <div class="et-name">IMPLEMENTS</div>
+    <p>Concrete instantiation of an abstract concept — e.g., <code>OpenClaw IMPLEMENTS ProgressiveToolDisclosure</code>. Useful for finding all runtimes sharing a mechanism.</p>
+  </div>
+  <div class="et">
+    <div class="et-name">RELATES_TO</div>
+    <p>Conceptual proximity without a dependency direction. Used for cross-layer concepts — e.g., <code>SecurityHardening RELATES_TO Sandbox</code>.</p>
+  </div>
+</div>
+
+<div class="conf-box">
+  <h3>Why no confidence levels?</h3>
+  <p>Confidence scores exist to compensate for retrieval uncertainty. RAG returns chunks that <em>might</em> be relevant, scored by vector distance. A 0.87 cosine score doesn't tell you if the relationship is real — it tells you the embedding is similar. CKG has no retrieval step, so there's nothing to score.</p>
+  <p>The edge type <em>is</em> the confidence signal. <strong>REQUIRES</strong> means the relationship is load-bearing and sourced. <strong>RELATES_TO</strong> means it's real but weaker. Absent means the graph makes no claim — which is different from "low confidence." A missing edge is not a soft no; it's silence from a source-grounded system.</p>
+</div>
+
+<div class="conf-compare">
+  <div class="cc rag">
+    <div class="cc-head">✗ RAG answer</div>
+    <p>"CorporateCA is probably used for identity management... <em>(similarity: 0.81)</em>"<br><br>The score is on the chunk retrieval, not the factual claim. The claim itself is unverified.</p>
+  </div>
+  <div class="cc ckg">
+    <div class="cc-head">✓ CKG answer</div>
+    <p>"CorporateCA is anchored at image build for TLS interception proxy traversal."<br><br>No score. Declared edge. Traces to security hardening source doc. Ask for the edge and it returns it verbatim.</p>
+  </div>
+</div>
+
+<!-- A/B TEST -->
+<h2>A/B test — NemoClaw domain, local models, no GPU</h2>
+<p style="font-size:13px;color:var(--mid);margin:0 0 10px">30 questions from real GitHub issues · CPU only · Ollama · temperature 0 · seed 42</p>
+<div class="ab-stats">
+  <div class="ab-stat hero">
+    <div class="ab-num">+103%</div>
+    <div class="ab-lbl">Prereq-chain F1<br>nemotron + CKG</div>
+  </div>
+  <div class="ab-stat hero">
+    <div class="ab-num">+73%</div>
+    <div class="ab-lbl">Multi-hop F1<br>nemotron + CKG</div>
+  </div>
+  <div class="ab-stat hero">
+    <div class="ab-num">+71%</div>
+    <div class="ab-lbl">Lookup F1<br>nemotron + CKG</div>
+  </div>
+  <div class="ab-stat warn">
+    <div class="ab-num">30%</div>
+    <div class="ab-lbl">of graph loaded<br>context ceiling hit</div>
+  </div>
+</div>
+<div class="ab-note">phi4-mini and nemotron-mini truncate at ~2,050 tokens. The CKG is 6,837 tokens — only 30% is loading. Prereq-chain F1 still doubles on that fraction. Full-context models widen the gap further.</div>
+
+<div class="ex-block">
+  <div class="ex-q">
+    <div class="ex-qid">L01 — lookup · phi4-mini</div>
+    <p>What are the three agent runtimes supported by NemoClaw and how is each activated?</p>
+  </div>
+  <div class="ex-ab">
+    <div class="ex-col bad">
+      <div class="ex-head">✗ Bare model</div>
+      <div class="ex-ans">"NemoClaw supports TensorFlow, PyTorch, and ONNX Runtime as its agent runtimes. To activate TensorFlow, you can use..."</div>
+      <div class="ex-why">Invented from general ML knowledge. Model doesn't know NemoClaw exists as an agent platform.</div>
+    </div>
+    <div class="ex-col good">
+      <div class="ex-head">✓ With CKG</div>
+      <div class="ex-ans">"OpenClaw (default), Hermes (NEMOCLAW_AGENT=hermes), LangChain Deep Agents (NEMOCLAW_AGENT=dcode)"</div>
+      <div class="ex-why">Declared edges, correct activation paths.</div>
+    </div>
+  </div>
+</div>
+
+<div class="ex-block">
+  <div class="ex-q">
+    <div class="ex-qid">P08 — prereq-chain · nemotron-mini · best Δ +0.261</div>
+    <p>How does CorporateCA integrate into NemoClaw's security chain?</p>
+  </div>
+  <div class="ex-ab">
+    <div class="ex-col bad">
+      <div class="ex-head">✗ Bare model</div>
+      <div class="ex-ans">"CorporateCA, a cloud-native identity and access management (IAM) solution from NVIDIA, can be integrated with NemoClaw to enhance its security posture..."</div>
+      <div class="ex-why">Hallucinated. CorporateCA is not an NVIDIA IAM product.</div>
+    </div>
+    <div class="ex-col good">
+      <div class="ex-head">✓ With CKG</div>
+      <div class="ex-ans">"CorporateCA is anchored at the image build stage for TLS interception proxy traversal in NemoClaw."</div>
+      <div class="ex-why">Exact mechanism, correct integration point.</div>
+    </div>
+  </div>
+</div>
+
+<div class="ex-block">
+  <div class="ex-q">
+    <div class="ex-qid">L08 — lookup · nemotron-mini · Δ +0.194</div>
+    <p>What enterprise manufacturing deployment uses NemoClaw via the FOX Blueprint?</p>
+  </div>
+  <div class="ex-ab">
+    <div class="ex-col bad">
+      <div class="ex-head">✗ Bare model</div>
+      <div class="ex-ans">"...FOX (Flexible Open-Source Object Tracking) Blueprint. Here are some examples: Quality Control inspection..."</div>
+      <div class="ex-why">Invented acronym expansion. No mention of Foxconn or MoMClaw.</div>
+    </div>
+    <div class="ex-col good">
+      <div class="ex-head">✓ With CKG</div>
+      <div class="ex-ans">"Foxconn's MoMClaw is a production deployment of the FOX Blueprint on NemoClaw."</div>
+      <div class="ex-why">Correct. Declared edge: MoMClaw → FOX_Blueprint.</div>
+    </div>
+  </div>
+</div>
+
+<!-- INSTALL -->
+<h2>Install</h2>
+<h3>Add to claude.ai (no install required)</h3>
+<div class="install-url"><span class="lbl">URL</span>https://ckg-nvidia-nemoclaw.onrender.com/mcp</div>
+<p style="font-size:13px;color:var(--mid)">Settings → Connectors → Add connector → paste URL above.</p>
+
+<h3>Local — Claude Desktop / Claude Code</h3>
+<div class="pip" style="margin-bottom:10px"><span class="$">$</span><span><span class="cmd">uvx</span> <span class="pkg">ckg-nvidia-nemoclaw</span></span></div>
+<pre><span class="cm">// claude_desktop_config.json</span>
+<span class="sy">{</span> <span class="kw">"mcpServers"</span>: <span class="sy">{</span>
+  <span class="kw">"nemoclaw"</span>: <span class="sy">{</span>
+    <span class="kw">"command"</span>: <span class="st">"uvx"</span>,
+    <span class="kw">"args"</span>: <span class="sy">[</span><span class="st">"ckg-nvidia-nemoclaw"</span><span class="sy">]</span>
+  <span class="sy">}</span>
+<span class="sy">}}</span></pre>
+
+<!-- TOOLS -->
+<h2>Tools</h2>
+<div class="tw"><table>
+  <thead><tr><th>Tool</th><th>Description</th></tr></thead>
+  <tbody>
+    <tr><td class="mono">ask_nemoclaw(question)</td><td>Natural language query — auto-detects concept, traverses the relevant subgraph</td></tr>
+    <tr><td class="mono">query_ckg(concept, depth)</td><td>Typed subgraph around a specific concept (1–5 hops)</td></tr>
+    <tr><td class="mono">get_prerequisites(concept)</td><td>Full upstream prerequisite chain — every dependency in order</td></tr>
+    <tr><td class="mono">search_concepts(query)</td><td>Fuzzy search across all 55 concepts</td></tr>
+    <tr><td class="mono">list_domains()</td><td>Available domains and node/edge counts</td></tr>
+  </tbody>
+</table></div>
+
+<!-- GRAPH CONTENTS -->
+<h2>What's in the graph</h2>
+<p style="font-size:13px;color:var(--mid);margin:0 0 10px">55 nodes · 74 edges · edge types: <code>REQUIRES</code> · <code>ENABLES</code> · <code>IMPLEMENTS</code> · <code>RELATES_TO</code></p>
+<div class="graph-grid">
+  <div class="gg"><div class="gg-lbl">Agent runtimes</div><p>OpenClaw · Hermes · LangChain Deep Agents</p></div>
+  <div class="gg"><div class="gg-lbl">Platform</div><p>OpenShell · NVIDIA Agent Toolkit · OpenShell TUI · CLI</p></div>
+  <div class="gg"><div class="gg-lbl">Inference</div><p>SharedGateway · vLLM · Ollama · NIM Local · ModelRouter</p></div>
+  <div class="gg"><div class="gg-lbl">Policy</div><p>NetworkPolicy · PolicyTier (Restricted/Balanced/Open) · PolicyPreset</p></div>
+  <div class="gg"><div class="gg-lbl">Security</div><p>L7Proxy · Landlock LSM · CONNECT Proxy · CorporateCA · SecurityHardening</p></div>
+  <div class="gg"><div class="gg-lbl">Agent features</div><p>Progressive Tool Disclosure · Context Compaction · Heartbeat · Snapshots · Shields</p></div>
+  <div class="gg"><div class="gg-lbl">Deployment</div><p>DGX Spark · DGX Station · macOS Apple Silicon · WSL2 · Brev</p></div>
+  <div class="gg"><div class="gg-lbl">Ecosystem</div><p>FOX Blueprint · MoMClaw (Foxconn) · Nemotron 3 Ultra · Agent Harness</p></div>
+</div>
+
+<!-- COMMUNITY PULSE -->
+<h2>Community pulse</h2>
+<p style="font-size:13px;color:var(--mid);margin:0 0 10px">Signal from 123 open GitHub issues · HN threads 47427027 + 47435066 · hands-on walkthroughs.</p>
+
+<h3>GitHub — top pain threads</h3>
+<div class="gh-issues">
+  <div class="gh-issue hot">
+    <div class="gh-num">#7084 open</div>
+    <div class="gh-title">Hermes shows ready but tool calls silently fail ("phantom-ready")</div>
+    <div class="gh-body">Async state between OpenShell and agent runtime not synchronized</div>
+  </div>
+  <div class="gh-issue">
+    <div class="gh-num">#360 open · 47 thumbs</div>
+    <div class="gh-title">"Can I run local with no API key?"</div>
+    <div class="gh-body">inference.local path requires NVIDIA API key even in offline mode; gap between docs and behavior</div>
+  </div>
+  <div class="gh-issue">
+    <div class="gh-num">#1832 open</div>
+    <div class="gh-title">Multi-sandbox SharedGateway conflicts</div>
+    <div class="gh-body">Two sandbox containers on the same host claim the same InferenceProvider slot; no isolation docs</div>
+  </div>
+  <div class="gh-issue">
+    <div class="gh-num">#2991 open</div>
+    <div class="gh-title">Context window fills after ~12 tool calls in OpenClaw</div>
+    <div class="gh-body">No auto-compaction; session degrades silently</div>
+  </div>
+  <div class="gh-issue">
+    <div class="gh-num">#5133 open</div>
+    <div class="gh-title">PolicyPreset Telegram/Discord integration underdocumented</div>
+    <div class="gh-body">No end-to-end example for messaging channel policy binding</div>
+  </div>
+</div>
+
+<h3>HN + community themes</h3>
+<div class="hn-themes">
+  <div class="hn-theme">
+    <h3>"Which agent is burning my budget?"</h3>
+    <p>OpenShell surfaced per-agent token spend for the first time. Developers immediately ask how to reduce it — not just see it. CKG is the answer to that follow-up.</p>
+  </div>
+  <div class="hn-theme">
+    <h3>The local inference expectation gap</h3>
+    <p>Dominant skepticism: "even local mode demands an API key." HN thread 47427027 has 83 upvotes on this complaint. CKG runs on pure Python BFS — no model, no API, no cloud.</p>
+  </div>
+  <div class="hn-theme">
+    <h3>ProgressiveToolDisclosure confusion</h3>
+    <p>Three runtimes (OpenClaw/Hermes/LangChain) share it, docs cover each separately. Developers don't realize it's the same mechanism. The graph makes the shared edge visible.</p>
+  </div>
+</div>
+
+<!-- SOURCES -->
+<h2>Sources</h2>
+<p style="font-size:13px;color:var(--mid);margin:0 0 10px">Every node and edge traces to one of these. No probabilistic inference — declared relationships only.</p>
+<div class="tw"><table>
+  <thead><tr><th>Type</th><th>Source</th><th>Coverage</th></tr></thead>
+  <tbody>
+    <tr><td>Official</td><td class="mono" style="font-size:12px">docs.nvidia.com/nemoclaw/latest/</td><td>Core platform — agent runtimes, OpenShell, security, inference routing, policy</td></tr>
+    <tr><td>Official</td><td class="mono" style="font-size:12px">FOX Blueprint docs</td><td>MoMClaw (Foxconn) manufacturing deployment, enterprise patterns</td></tr>
+    <tr><td>Official</td><td class="mono" style="font-size:12px">Nemotron 3 Ultra ecosystem</td><td>DGX Spark/Station, ModelRouter, NIM Local integration</td></tr>
+    <tr><td>Official</td><td class="mono" style="font-size:12px">Security hardening guide</td><td>LandlockLSM, L7Proxy, CorporateCA, CONNECT Proxy, Sandbox chain</td></tr>
+    <tr><td>Official</td><td class="mono" style="font-size:12px">Managed MCP Server docs</td><td>ManagedMCPServer, NetworkPolicy, PolicyTier, PolicyPreset, messaging bindings</td></tr>
+    <tr><td>Official</td><td class="mono" style="font-size:12px">Agent features reference</td><td>ProgressiveToolDisclosure, Context Compaction, Heartbeat, Snapshots, Shields</td></tr>
+    <tr><td>Community</td><td class="mono" style="font-size:12px">github.com/Yarmoluk/ckg-nvidia-nemoclaw/issues</td><td>123 issues — phantom-ready, local API key, SharedGateway conflicts</td></tr>
+    <tr><td>Community</td><td class="mono" style="font-size:12px">HN 47427027 · HN 47435066</td><td>Local inference gap (83↑) · token burn visibility · multi-sandbox use cases</td></tr>
+    <tr><td>Dataset</td><td class="mono" style="font-size:12px">huggingface.co/datasets/danyarm/ckg-benchmark</td><td>KRB v0.6.2 — 7,928 queries, 30 NemoClaw-domain questions</td></tr>
+    <tr><td>Benchmark</td><td class="mono" style="font-size:12px">github.com/Yarmoluk/ckg-benchmark/paper/main.pdf</td><td>Full methodology, F1 0.471, RAG/GraphRAG baselines, reproduction</td></tr>
+    <tr><td>A/B report</td><td class="mono" style="font-size:12px">ckg-ab-test/results/REPORT_nemoclaw.md</td><td>30-question NemoClaw run · phi4-mini + nemotron-mini · CPU · full raw results</td></tr>
+  </tbody>
+</table></div>
+
+<!-- BENCHMARK -->
+<h2>Benchmark (v0.6.2 locked)</h2>
+<div class="bench">
+  <div class="bc hero">
+    <div class="bc-n">0.471</div>
+    <div class="bc-l">CKG Macro F1</div>
+    <div class="bc-sub">269 tokens · $7.81/1k</div>
+  </div>
+  <div class="bc dim">
+    <div class="bc-n">0.123</div>
+    <div class="bc-l">RAG baseline</div>
+    <div class="bc-sub">2,982 tokens · $76.23/1k</div>
+  </div>
+  <div class="bc dim">
+    <div class="bc-n">0.120</div>
+    <div class="bc-l">GraphRAG baseline</div>
+    <div class="bc-sub">~3,000 tokens · ~$76/1k</div>
+  </div>
+</div>
+<p style="font-size:12.5px;color:var(--sub);text-align:center">7,928 queries · 5-hop F1: 0.772 (CKG) vs 0.170 (RAG) · <a href="https://huggingface.co/datasets/danyarm/ckg-benchmark">dataset public on HuggingFace</a> · run it yourself</p>
+
+<!-- CTA -->
+<h2>Try it now</h2>
+<div class="cta">
+  <h3>Add the NemoClaw graph to your agent in 30 seconds</h3>
+  <p>No API key. No GPU. No inference at query time. Add the URL connector in claude.ai or run locally with one command.</p>
+  <div class="cta-btns">
+    <a class="btn pri" href="https://graphifymd.com">Get started on graphifymd.com →</a>
+    <a class="btn sec" href="https://pypi.org/project/ckg-nvidia-nemoclaw/">View on PyPI</a>
+    <a class="btn sec" href="https://github.com/Yarmoluk/ckg-benchmark/blob/main/paper/main.pdf">Read the paper</a>
+  </div>
+  <p style="font-size:12px;margin-top:4px"><strong>97 domains available</strong> · ckg-mcp serves the full Graphify.md ecosystem · Free tier included</p>
+</div>
+
+<div class="footer">Built by <a href="https://graphifymd.com">Graphify.md</a> · <a href="https://pypi.org/project/ckg-nvidia-nemoclaw/">PyPI</a> · patent pending<br><span style="margin-top:4px;display:inline-block;font-size:9.5px">Community-built. Not affiliated with, endorsed by, or sponsored by NVIDIA Corporation. NemoClaw is a trademark of NVIDIA. All referenced trademarks belong to their respective owners.</span></div>
+
+</div><!-- /wrap -->
+
+<script>
+(function(){
+const LAYERS={root:'--c-root',agent:'--c-agent',sec:'--c-sec',inf:'--c-inf',pol:'--c-pol',feat:'--c-feat'};
+const NS=[
+  {id:'NemoClaw',l:'root',r:11},{id:'OpenShell',l:'root',r:9},
+  {id:'OpenClaw',l:'agent',r:8},{id:'Hermes',l:'agent',r:8},{id:'LangChain',l:'agent',r:8},
+  {id:'L7Proxy',l:'sec',r:8},{id:'LandlockLSM',l:'sec',r:8},{id:'SecurityHard.',l:'sec',r:8},{id:'Sandbox',l:'sec',r:7},{id:'CorporateCA',l:'sec',r:7},
+  {id:'SharedGateway',l:'inf',r:8},{id:'InferenceProvider',l:'inf',r:9},{id:'vLLM',l:'inf',r:7},{id:'Ollama',l:'inf',r:7},{id:'NIM Local',l:'inf',r:7},{id:'ModelRouter',l:'inf',r:7},
+  {id:'NetworkPolicy',l:'pol',r:8},{id:'PolicyTier',l:'pol',r:7},{id:'PolicyPreset',l:'pol',r:8},{id:'Telegram',l:'pol',r:7},{id:'Discord',l:'pol',r:7},
+  {id:'PTD',l:'feat',r:9},{id:'ManagedMCP',l:'feat',r:8},{id:'AgentHeartbeat',l:'feat',r:7},{id:'ContextCompact.',l:'feat',r:7}
+];
+const ES=[
+  ['NemoClaw','OpenShell'],['NemoClaw','OpenClaw'],['NemoClaw','Hermes'],['NemoClaw','LangChain'],
+  ['NemoClaw','ManagedMCP'],['NemoClaw','AgentHeartbeat'],
+  ['OpenClaw','PTD'],['Hermes','PTD'],['LangChain','PTD'],
+  ['OpenShell','L7Proxy'],['OpenShell','LandlockLSM'],
+  ['L7Proxy','SharedGateway'],['SharedGateway','InferenceProvider'],
+  ['InferenceProvider','vLLM'],['InferenceProvider','Ollama'],['InferenceProvider','NIM Local'],['InferenceProvider','ModelRouter'],
+  ['ManagedMCP','NetworkPolicy'],['ManagedMCP','L7Proxy'],
+  ['NetworkPolicy','PolicyTier'],['NetworkPolicy','PolicyPreset'],
+  ['PolicyPreset','Telegram'],['PolicyPreset','Discord'],
+  ['SecurityHard.','Sandbox'],['SecurityHard.','LandlockLSM'],['SecurityHard.','CorporateCA']
+];
+
+const canvas=document.getElementById('graph-canvas');
+const ctx=canvas.getContext('2d');
+let W,H,hoverId=null,dragging=null,dragOX=0,dragOY=0;
+
+function cssVar(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim()}
+
+function resize(){
+  W=canvas.offsetWidth; H=380;
+  canvas.width=W*devicePixelRatio; canvas.height=H*devicePixelRatio;
+  ctx.scale(devicePixelRatio,devicePixelRatio);
+  canvas.style.height=H+'px';
+}
+
+// init positions in rough layer clusters
+NS.forEach((n,i)=>{
+  const angle=(i/NS.length)*Math.PI*2;
+  const layerR={root:60,agent:130,sec:200,inf:160,pol:250,feat:100}[n.l]||150;
+  n.x=W/2+layerR*Math.cos(angle)*(0.8+Math.random()*0.4);
+  n.y=H/2+layerR*Math.sin(angle)*(0.8+Math.random()*0.4);
+  n.vx=0; n.vy=0;
+});
+
+function tick(){
+  const cx=W/2,cy=H/2;
+  NS.forEach(a=>{
+    NS.forEach(b=>{
+      if(a===b)return;
+      const dx=a.x-b.x,dy=a.y-b.y,d=Math.sqrt(dx*dx+dy*dy)||1;
+      const f=5500/(d*d);
+      a.vx+=dx/d*f; a.vy+=dy/d*f;
+    });
+  });
+  ES.forEach(([ai,bi])=>{
+    const a=NS.find(n=>n.id===ai),b=NS.find(n=>n.id===bi);
+    if(!a||!b)return;
+    const dx=b.x-a.x,dy=b.y-a.y,d=Math.sqrt(dx*dx+dy*dy)||1;
+    const f=(d-110)*0.035;
+    a.vx+=dx/d*f; a.vy+=dy/d*f;
+    b.vx-=dx/d*f; b.vy-=dy/d*f;
+  });
+  NS.forEach(n=>{
+    n.vx+=(cx-n.x)*0.008; n.vy+=(cy-n.y)*0.008;
+    n.vx*=0.82; n.vy*=0.82;
+    n.x+=n.vx; n.y+=n.vy;
+    n.x=Math.max(n.r+28,Math.min(W-n.r-28,n.x));
+    n.y=Math.max(n.r+8,Math.min(H-n.r-22,n.y));
+  });
+}
+
+// warm-up
+resize();
+NS.forEach(n=>{ n.x=W/2+(Math.random()-.5)*W*.7; n.y=H/2+(Math.random()-.5)*H*.7; });
+for(let i=0;i<400;i++)tick();
+
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  const bg=cssVar('--surf'),edgeC=cssVar('--bdr'),textC=cssVar('--ink');
+  ctx.fillStyle=bg; ctx.fillRect(0,0,W,H);
+
+  // connected nodes for hover highlight
+  const nbrs=new Set();
+  if(hoverId){ES.forEach(([a,b])=>{if(a===hoverId)nbrs.add(b);if(b===hoverId)nbrs.add(a);});}
+
+  // edges
+  ES.forEach(([ai,bi])=>{
+    const a=NS.find(n=>n.id===ai),b=NS.find(n=>n.id===bi);
+    if(!a||!b)return;
+    const hi=hoverId&&(hoverId===ai||hoverId===bi);
+    ctx.beginPath();
+    ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y);
+    ctx.strokeStyle=hi?cssVar('--acc'):edgeC;
+    ctx.lineWidth=hi?1.8:.9;
+    ctx.globalAlpha=hi?0.9:0.5;
+    ctx.stroke();
+    ctx.globalAlpha=1;
+  });
+
+  // nodes
+  NS.forEach(n=>{
+    const col=cssVar(LAYERS[n.l]);
+    const isHov=n.id===hoverId,isNbr=nbrs.has(n.id),faded=hoverId&&!isHov&&!isNbr;
+    ctx.globalAlpha=faded?0.25:1;
+
+    // glow ring for hovered node
+    if(isHov){
+      ctx.beginPath();
+      ctx.arc(n.x,n.y,n.r+6,0,Math.PI*2);
+      ctx.fillStyle=col+'40';
+      ctx.fill();
+    }
+
+    ctx.beginPath();
+    ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+    ctx.fillStyle=col;
+    ctx.fill();
+    ctx.strokeStyle=bg; // use surface bg so edge shows through cleanly
+    ctx.lineWidth=1.5;
+    ctx.stroke();
+
+    // label BELOW the node with bg halo for readability over any surface
+    ctx.font=`500 9px ui-monospace,monospace`;
+    ctx.textAlign='center';
+    ctx.textBaseline='top';
+    ctx.globalAlpha=faded?0.18:1;
+    const ty=n.y+n.r+3;
+    ctx.lineWidth=3;
+    ctx.strokeStyle=bg;  // halo in background colour
+    ctx.strokeText(n.id,n.x,ty);
+    ctx.fillStyle=textC; // dark ink
+    ctx.fillText(n.id,n.x,ty);
+    ctx.globalAlpha=1;
+  });
+}
+
+function loop(){tick();draw();requestAnimationFrame(loop);}
+requestAnimationFrame(loop);
+
+// hover
+canvas.addEventListener('mousemove',e=>{
+  const r=canvas.getBoundingClientRect();
+  const mx=e.clientX-r.left,my=e.clientY-r.top;
+  if(dragging){dragging.x=mx;dragging.y=my;dragging.vx=0;dragging.vy=0;return;}
+  hoverId=null;
+  canvas.style.cursor='default';
+  for(const n of NS){
+    const dx=mx-n.x,dy=my-n.y;
+    if(dx*dx+dy*dy<=n.r*n.r*1.5){hoverId=n.id;canvas.style.cursor='pointer';break;}
+  }
+});
+canvas.addEventListener('mouseleave',()=>{hoverId=null;});
+canvas.addEventListener('mousedown',e=>{
+  const r=canvas.getBoundingClientRect();
+  const mx=e.clientX-r.left,my=e.clientY-r.top;
+  for(const n of NS){const dx=mx-n.x,dy=my-n.y;if(dx*dx+dy*dy<=n.r*n.r*1.5){dragging=n;break;}}
+});
+canvas.addEventListener('mouseup',()=>{dragging=null;});
+
+window.addEventListener('resize',()=>{resize();});
+})();
+</script>
+</body>
+</html>
