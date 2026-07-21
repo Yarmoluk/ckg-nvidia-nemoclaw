@@ -4,7 +4,7 @@
 
 # ckg-nvidia-nemoclaw
 
-**Graphify.md is a community-built project, not affiliated with NVIDIA, that turns NemoClaw into a traversable knowledge graph for source-grounded lookup and dependency traversal.** Built for platform engineers, agent developers, and docs teams who need deterministic answers about runtimes, policy, security, and deployment — with every result traceable to declared relationships rather than model inference.
+**Graphify.md is a community-built knowledge graph for NemoClaw, designed for platform engineers, agent developers, and docs teams who need deterministic answers about dependencies, runtimes, policy, and deployment paths.** Every result traces to a declared edge and authoritative source — not model inference.
 
 > Not a general-purpose semantic search layer — if it's not a declared edge, the graph doesn't return it.
 
