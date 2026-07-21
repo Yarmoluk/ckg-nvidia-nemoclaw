@@ -356,7 +356,12 @@ Three layers, three licenses, one plain-English answer to each question you actu
 ```
 benchmark: ckg-benchmark v0.6.2
 dataset: huggingface.co/datasets/danyarm/ckg-benchmark
-benchmarked: false
+benchmarked: true
+this_domain_f1: 0.576
+queries_tested: 28
+baseline_f1: 0.156
+lift_vs_baseline: +269%
+model: phi4-mini (Ollama local)
 rag_baseline_f1: 0.123
 graphrag_baseline_f1: 0.120
 mean_tokens: 269
