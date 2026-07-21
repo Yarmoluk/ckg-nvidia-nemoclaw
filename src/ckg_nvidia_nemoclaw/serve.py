@@ -35,6 +35,10 @@ _LANDING_HTML = f"""<!DOCTYPE html>
   </style>
 </head>
 <body>
+  <a href="https://yarmoluk.github.io/ckg-nvidia-nemoclaw">
+    <img src="https://raw.githubusercontent.com/Yarmoluk/ckg-nvidia-nemoclaw/main/assets/og.png"
+         alt="ckg-nvidia-nemoclaw" style="width:100%;border-radius:8px;margin-bottom:24px;display:block"/>
+  </a>
   <h1>ckg-nvidia-nemoclaw <span class="badge">v{_VERSION}</span></h1>
   <p class="sub">Auditable knowledge graph · NVIDIA NemoClaw · built by <a href="https://graphifymd.com">Graphify.md</a></p>
   <p class="tagline">

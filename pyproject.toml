@@ -4,8 +4,8 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ckg-nvidia-nemoclaw"
-version = "0.5.3"
-description = "Auditable knowledge graph for NVIDIA NemoClaw with cryptographic source traceability — deterministic agent answers, MCP-native, 11× fewer tokens than RAG"
+version = "0.5.4"
+description = "Auditable knowledge graph for NVIDIA NemoClaw with cryptographic source traceability — 4× F1 over RAG, 11× fewer tokens, MCP-native, deterministic agent answers"
 readme = "README.md"
 license = { text = "Elastic-2.0" }
 authors = [{ name = "Daniel Yarmoluk", email = "daniel.yarmoluk@gmail.com" }]

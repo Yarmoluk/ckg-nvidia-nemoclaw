@@ -3,6 +3,12 @@
 # ckg-nvidia-nemoclaw
 
 <p align="center">
+  <a href="https://yarmoluk.github.io/ckg-nvidia-nemoclaw">
+    <img src="https://raw.githubusercontent.com/Yarmoluk/ckg-nvidia-nemoclaw/main/assets/og.png" alt="ckg-nvidia-nemoclaw — NemoClaw as a traversable knowledge graph" width="100%"/>
+  </a>
+</p>
+
+<p align="center">
   <a href="https://pypi.org/project/ckg-nvidia-nemoclaw/"><img src="https://img.shields.io/pypi/v/ckg-nvidia-nemoclaw?color=0f6e56&label=PyPI" alt="PyPI version"/></a>
   <a href="https://pypi.org/project/ckg-nvidia-nemoclaw/"><img src="https://img.shields.io/pypi/pyversions/ckg-nvidia-nemoclaw?color=0f6e56" alt="Python"/></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/data-ELv2-0f6e56" alt="Data: ELv2"/></a>
