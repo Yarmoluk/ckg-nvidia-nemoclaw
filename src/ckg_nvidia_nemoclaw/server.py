@@ -29,6 +29,8 @@ from __future__ import annotations
 from mcp.server.fastmcp import FastMCP
 from .graph import available_domains, load_graph, load_domain_meta, find_concept, bfs_subgraph, prerequisite_chain
 
+PROVENANCE_VERSION = "v1"
+
 DOMAIN = "nemoclaw"
 
 _HINTS: list[str] = [
@@ -62,6 +64,12 @@ def _graph():
     return _graph_cache
 
 
+def _unpack():
+    """Unpack all 6 graph components."""
+    id_to_label, label_to_id, prerequisites, dependents, taxonomy, provenance = _graph()
+    return id_to_label, label_to_id, prerequisites, dependents, taxonomy, provenance
+
+
 @mcp.tool()
 def ask_nemoclaw(question: str) -> str:
     """Answer a question about NVIDIA NemoClaw by traversing the knowledge graph.
@@ -74,7 +82,7 @@ def ask_nemoclaw(question: str) -> str:
     Args:
         question: Your question about NemoClaw concepts or architecture.
     """
-    id_to_label, label_to_id, prerequisites, dependents, taxonomy = _graph()
+    id_to_label, label_to_id, prerequisites, dependents, taxonomy, provenance = _graph()
     q = question.lower()
 
     hit = find_concept(label_to_id, q)
@@ -117,7 +125,7 @@ def query_ckg(concept: str, depth: int = 3) -> str:
         concept: Exact or partial concept label (e.g. 'OpenClaw', 'NetworkPolicy', 'L7Proxy').
         depth: Traversal hops (1–5, default 3).
     """
-    id_to_label, label_to_id, prerequisites, dependents, taxonomy = _graph()
+    id_to_label, label_to_id, prerequisites, dependents, taxonomy, provenance = _graph()
     depth = max(1, min(depth, 5))
 
     cid = find_concept(label_to_id, concept.lower())
@@ -147,7 +155,7 @@ def get_prerequisites(concept: str) -> str:
     Args:
         concept: Exact or partial concept label.
     """
-    id_to_label, label_to_id, prerequisites, dependents, taxonomy = _graph()
+    id_to_label, label_to_id, prerequisites, dependents, taxonomy, provenance = _graph()
     cid = find_concept(label_to_id, concept.lower())
     if not cid:
         return f"Concept '{concept}' not found. Use search_concepts() first."
@@ -169,7 +177,7 @@ def search_concepts(query: str) -> str:
     Args:
         query: Partial name or keyword (e.g. 'policy', 'inference', 'agent').
     """
-    id_to_label, label_to_id, prerequisites, dependents, taxonomy = _graph()
+    id_to_label, label_to_id, prerequisites, dependents, taxonomy, provenance = _graph()
     q = query.lower()
     matches = [
         (nid, label)
@@ -197,6 +205,72 @@ def list_domains() -> str:
         f"Source: docs.nvidia.com/nemoclaw/latest/ · github.com/NVIDIA/NemoClaw\n"
         f"Benchmark: github.com/Yarmoluk/ckg-benchmark/blob/main/paper/main.pdf"
     )
+
+
+@mcp.tool()
+def verify_source(concept: str) -> str:
+    """Return the authoritative source URL and content hash for a NemoClaw concept node.
+
+    Every node in the CKG was declared from a specific source document. This tool
+    returns the source URL (where the node came from) and the SHA-256 hash of that
+    document's bytes at extraction time. A hash mismatch on re-fetch means either
+    the source has changed (stale edge — re-extract) or the graph was patched without
+    re-fetching (silent edit — investigate).
+
+    Audit chain:
+        edge answer → graph commit → source_hash → source_url (fetch hint)
+
+    Verification:
+        curl -s <source_url> | sha256sum
+        # compare output to source_hash
+
+    Args:
+        concept: Exact or partial concept label (e.g. 'CorporateCA', 'L7Proxy').
+    """
+    id_to_label, label_to_id, prerequisites, dependents, taxonomy, provenance = _graph()
+    cid = find_concept(label_to_id, concept.lower())
+    if not cid:
+        return f"Concept '{concept}' not found. Use search_concepts() to find the closest match."
+
+    label = id_to_label[cid]
+    prov = provenance.get(cid, {})
+    source_url = prov.get("source_url") or "unknown"
+    source_hash = prov.get("source_hash") or "sha256:not-computed"
+
+    sentinel_notes = {
+        "sha256:restricted": "Source returned 4xx/5xx — page requires auth or is gone. Hash was not computable.",
+        "sha256:unavailable": "Network error at hash-compute time. Re-run scripts/refresh_hashes.py to retry.",
+        "sha256:no-source-url": "No source URL declared for this node.",
+    }
+    note = sentinel_notes.get(source_hash, "")
+
+    lines = [
+        f"## Source provenance — {label}",
+        f"",
+        f"**concept:**      {label}",
+        f"**taxonomy:**     {taxonomy.get(cid, 'unknown')}",
+        f"**source_url:**   {source_url}",
+        f"**source_hash:**  {source_hash}",
+        f"**provenance:**   GuardrailDecisionV1 · {PROVENANCE_VERSION}",
+        f"",
+    ]
+    if note:
+        lines += [f"⚠ {note}", ""]
+    else:
+        lines += [
+            "**What source_hash proves:** this node was declared from the exact bytes at",
+            "source_url at extraction time. A mismatch is a deterministic stale-edge signal.",
+            "",
+            "**Verification:**",
+            f"```bash",
+            f"curl -s '{source_url}' | sha256sum",
+            f"# expected: {source_hash.removeprefix('sha256:')}",
+            f"```",
+            "",
+            "**What source_url proves:** where the node came from — not that the page still",
+            "says the same thing. source_hash is the trust anchor; source_url is a fetch hint.",
+        ]
+    return "\n".join(lines)
 
 
 def main():

@@ -125,6 +125,39 @@ RAG returns three separate docs. The graph knows — it's a declared edge.
 
 ---
 
+## Source provenance — verifiable to the byte
+
+Every node traces to a declared source URL and a SHA-256 hash of that document's bytes at extraction time. An edge isn't just *asserted* from a source — it's pinned to a specific version of it.
+
+```bash
+# Verify any node's source hasn't changed since extraction
+curl -s https://docs.nvidia.com/nemoclaw/latest/ | sha256sum
+# expected: 3d5bc97645f1ea274497ee6b931d9649990504daa9fa9ecc56411c324de0beb8
+```
+
+**The full audit chain:**
+```
+edge answer
+  → graph commit hash       (git log -- nemoclaw.csv)
+  → source_content_hash     (sha256 of page bytes at extraction time)
+  → knowledge_source_ref    (URL — fetch hint, not trust anchor)
+```
+
+A hash mismatch means either the source changed (stale edge — re-extract) or the graph was patched without re-fetching (silent edit — investigate). No judgment required. Run `scripts/refresh_hashes.py` to recompute.
+
+Via MCP:
+```
+verify_source("CorporateCA")
+
+→ source_url:  https://docs.nvidia.com/nemoclaw/latest/
+  source_hash: sha256:3d5bc97645f1...
+  verify:      curl -s '<url>' | sha256sum
+```
+
+This implements the `knowledge_source_ref` + `source_content_hash` fields from [GuardrailDecisionV1](https://github.com/crewAIInc/crewAI/issues/4877) — applied here as a reference implementation for a domain CKG.
+
+---
+
 ## Declared relationships, not confidence scores
 
 Every edge was extracted from a source document and given a type. There are no probabilistic weights, no cosine similarity scores, no confidence intervals. An edge either exists — declared, typed, sourced — or it doesn't. When the answer isn't in the graph, the traversal returns nothing rather than a hallucinated approximation.
@@ -230,6 +263,7 @@ uvx ckg-nvidia-nemoclaw
 | `get_prerequisites(concept)` | Full upstream prerequisite chain — every dependency in order |
 | `search_concepts(query)` | Fuzzy search across all 55 concepts |
 | `list_domains()` | Available domains and node/edge counts |
+| `verify_source(concept)` | Source URL + SHA-256 hash for a concept node — full audit chain back to the source bytes |
 
 ---
 
