@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ckg-nvidia-nemoclaw"
-version = "0.5.2"
+version = "0.5.3"
 description = "Auditable knowledge graph for NVIDIA NemoClaw with cryptographic source traceability — deterministic agent answers, MCP-native, 11× fewer tokens than RAG"
 readme = "README.md"
 license = { text = "Elastic-2.0" }
