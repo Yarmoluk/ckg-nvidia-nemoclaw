@@ -4,9 +4,15 @@
 
 # ckg-nvidia-nemoclaw
 
-### NVIDIA NemoClaw as a traversable knowledge graph — MCP-native
+**Graphify.md is a community-built project, not affiliated with NVIDIA, that turns NemoClaw into a traversable knowledge graph for source-grounded lookup and dependency traversal.** Built for platform engineers, agent developers, and docs teams who need deterministic answers about runtimes, policy, security, and deployment — with every result traceable to declared relationships rather than model inference.
 
-**NemoClaw shows you which agent is burning your budget. CKG reduces the burn.**
+> Not a general-purpose semantic search layer — if it's not a declared edge, the graph doesn't return it.
+
+```bash
+pip install ckg-nvidia-nemoclaw
+```
+
+*"The graph doesn't guess — it traverses. Every answer traces to a declared edge."*
 
 [![PyPI version](https://img.shields.io/pypi/v/ckg-nvidia-nemoclaw?color=0f6e56&label=PyPI)](https://pypi.org/project/ckg-nvidia-nemoclaw/)
 [![Python](https://img.shields.io/pypi/pyversions/ckg-nvidia-nemoclaw?color=0f6e56)](https://pypi.org/project/ckg-nvidia-nemoclaw/)
@@ -15,15 +21,15 @@
 [![KRB v0.6.2](https://img.shields.io/badge/benchmark-KRB_v0.6.2-13201c)](https://github.com/Yarmoluk/ckg-benchmark/blob/main/paper/main.pdf)
 [![Built by Graphify.md](https://img.shields.io/badge/built_by-Graphify.md-0f6e56)](https://graphifymd.com)
 
-> *The graph doesn't guess — it traverses. Every answer traces to a declared edge.*
-
-[**PyPI →**](https://pypi.org/project/ckg-nvidia-nemoclaw/) · [**Benchmark →**](https://github.com/Yarmoluk/ckg-benchmark/blob/main/paper/main.pdf) · [**graphifymd.com →**](https://graphifymd.com)
+[PyPI](https://pypi.org/project/ckg-nvidia-nemoclaw/) · [GitHub](https://github.com/Yarmoluk/ckg-nvidia-nemoclaw) · [Benchmark paper](https://github.com/Yarmoluk/ckg-benchmark/blob/main/paper/main.pdf) · [HuggingFace dataset](https://huggingface.co/datasets/danyarm/ckg-benchmark) · [MCP connector URL](https://ckg-nvidia-nemoclaw.onrender.com/mcp) · [HN 47427027](https://news.ycombinator.com/item?id=47427027) · [HN 47435066](https://news.ycombinator.com/item?id=47435066) · [graphifymd.com](https://graphifymd.com) · [Pro · 97 domains](https://graphifymd.com/pro/) · [Benchmark](https://graphifymd.com/benchmark)
 
 </div>
 
 ---
 
 ## The graph
+
+55 nodes · 74 edges · colored by layer · edge types: `REQUIRES` · `ENABLES` · `IMPLEMENTS` · `RELATES_TO`
 
 ```mermaid
 graph TD
@@ -75,33 +81,29 @@ graph TD
 
 ## What developers are actually hitting
 
-Across GitHub issues, HN threads, and hands-on walkthroughs, three NemoClaw pain signals dominate:
+Signal from 123 GitHub issues, [HN 47427027](https://news.ycombinator.com/item?id=47427027), [HN 47435066](https://news.ycombinator.com/item?id=47435066), and hands-on walkthroughs.
 
-**1. Context bloat in tool loops.** Agents using OpenClaw, Hermes, or LangChain Deep Agents accumulate context across tool calls until the window fills and the session degrades. The bloat isn't the tools — it's that the model re-infers NemoClaw's architecture on every query instead of reading it from a declared structure.
+**01 — Context bloat in tool loops.** Agents forget tool schemas after loop iterations. The model re-infers NemoClaw's architecture on every query instead of reading declared structure.
 
-**2. "Which agent is burning my budget?"** Routing inference through OpenShell makes token spend visible per agent for the first time — developers can suddenly see the burn. The next question is how to reduce it.
+**02 — "Which agent is burning my budget?"** OpenShell makes token spend visible per agent for the first time. The next question is how to reduce it. CKG is that answer.
 
-**3. The Policy Source Gap.** NVIDIA's own OpenShell knowledge graph names this explicitly: `Policy Source Gap` — the missing layer between the runtime policy engine and the structured domain knowledge agents need to make compliant decisions. The graph declares the gap. We filled it.
-
-This package is that layer.
+**03 — The Policy Source Gap.** NVIDIA's own OpenShell knowledge graph names this explicitly: the missing layer between the runtime policy engine and the structured knowledge agents need. We filled it.
 
 ---
 
 ## What it is
 
-55 nodes · 74 edges · the full NemoClaw stack as a typed dependency graph. Pre-structured, traversable, deterministic. Served over MCP. No inference at query time — the graph declares relationships that the model traverses instead of infers.
+55 nodes · 74 edges · the full NemoClaw stack as a typed dependency graph. Pre-structured, traversable, deterministic. Served over MCP. No inference at query time.
 
 ```
-Agent asks: "What do I need to deploy a managed MCP server on NemoClaw?"
+get_prerequisites("ManagedMCPServer")
 
-CKG returns:
-  ManagedMCPServer
+→ ManagedMCPServer
   ├─ [ENABLES]  NemoClaw               ← platform root
   ├─ [REQUIRES] NetworkPolicy          ← root concept, no dependencies
   └─ [REQUIRES] L7Proxy
        ├─ [IMPLEMENTS] OpenShell
        └─ [REQUIRES]   SharedGateway
-            ├─ [ENABLES]     OpenShell
             └─ [IMPLEMENTS]  InferenceProvider
 
   269 tokens · declared edges only · no inference
@@ -109,123 +111,100 @@ CKG returns:
 ```
 
 ```
-Agent asks: "What are the three agent runtimes and what do they share?"
+query_ckg("ProgressiveToolDisclosure")
 
-  OpenClaw              → [ENABLES] ProgressiveToolDisclosure
-  Hermes                → [ENABLES] ProgressiveToolDisclosure
-  LangChain_Deep_Agents → [ENABLES] ProgressiveToolDisclosure
+← [IMPLEMENTS] OpenClaw
+← [IMPLEMENTS] Hermes
+← [IMPLEMENTS] LangChain_Deep_Agents
 
-  All three implement the same disclosure mechanism.
-  A RAG query returns three separate docs. The connection requires inference.
-  The graph knows — it's a declared edge.
+All three runtimes share this mechanism.
+RAG returns three separate docs. The graph knows — it's a declared edge.
 ```
 
 ---
 
-## Why zero inference matters for NemoClaw specifically
+## Declared relationships, not confidence scores
 
-The dominant community skepticism about NemoClaw: *"even local mode still demands an NVIDIA API key"* — the inference pipeline is cloud-connected regardless of configuration.
+Every edge was extracted from a source document and given a type. There are no probabilistic weights, no cosine similarity scores, no confidence intervals. An edge either exists — declared, typed, sourced — or it doesn't. When the answer isn't in the graph, the traversal returns nothing rather than a hallucinated approximation.
 
-CKG runs on **pure Python BFS**. No model. No inference. No API key. No cloud. The graph structure is the answer — the model traverses it, it doesn't generate it. This is what "the graph doesn't guess — it traverses" actually means at the implementation level.
+**Edge types:**
 
-This also makes it suitable for the use cases NemoClaw is specifically designed for: air-gapped deployments, sovereign infrastructure, edge hardware.
+| Type | Meaning | Example |
+|------|---------|---------|
+| `REQUIRES` | Hard prerequisite — A cannot function without B | `OpenShell REQUIRES L7Proxy` |
+| `ENABLES` | Capability unlock — A makes B possible | `ManagedMCPServer ENABLES NetworkPolicy` |
+| `IMPLEMENTS` | Concrete instantiation of an abstract concept | `OpenClaw IMPLEMENTS ProgressiveToolDisclosure` |
+| `RELATES_TO` | Conceptual proximity, no dependency direction | `SecurityHardening RELATES_TO Sandbox` |
 
----
-
-## The Sandbox Container dependency chain
-
-NemoClaw's sandbox is built to contain the tools your developers already use — the OpenShell CKG declares this explicitly:
+**Why no confidence levels?** Confidence scores exist to compensate for retrieval uncertainty. RAG returns chunks that *might* be relevant, scored by vector distance. A 0.87 cosine score doesn't tell you if the relationship is real — it tells you the embedding is similar. CKG has no retrieval step, so there's nothing to score. The edge type *is* the confidence signal: `REQUIRES` means load-bearing and sourced; `RELATES_TO` means real but weaker. A missing edge is not a soft no — it's silence from a source-grounded system.
 
 ```
-Sandbox Container
-  ├─ [REQUIRES] Gateway
-  │    └─ [REQUIRES] OpenShell Runtime
-  └─ [REQUIRES] K3s Kubernetes
+✗ RAG:  "CorporateCA is probably used for identity management... (similarity: 0.81)"
+        Score is on the chunk, not the claim. The claim itself is unverified.
 
-  [ENABLES] Claude Code
-  [ENABLES] OpenCode / Codex
-  [ENABLES] GitHub Copilot CLI
-  [ENABLES] Cursor
-  [ENABLES] Ollama (community)
+✓ CKG:  "CorporateCA is anchored at image build for TLS interception proxy traversal."
+        No score. Declared edge. Traces to security hardening source doc.
 ```
-
-When those agents run inside NemoClaw's blast radius, they need to reason about NemoClaw's architecture — routing, policy tiers, inference providers, security layers. That's exactly what this graph is for.
 
 ---
 
 ## A/B test — NemoClaw domain, local models, no GPU
 
-We ran 30 real questions drawn from GitHub issues, HN pain points, and the NemoClaw CKG — same questions, same model, with and without CKG injected. CPU only, Ollama, temperature 0.
+30 questions from real GitHub issues · CPU only · Ollama · temperature 0 · seed 42
 
-**Domain category results (excluding control questions):**
-
-| Category | nemotron bare | nemotron + CKG | Lift |
-|----------|---------------|----------------|------|
-| Lookup | 0.100 | 0.171 | **+71%** |
-| Multi-hop | 0.058 | 0.100 | **+73%** |
-| Prereq-chain | 0.077 | 0.156 | **+103%** |
+| Category | Bare model | + CKG | Lift |
+|----------|-----------|-------|------|
+| Lookup F1 | 0.100 | 0.171 | **+71%** |
+| Multi-hop F1 | 0.058 | 0.100 | **+73%** |
+| Prereq-chain F1 | 0.077 | 0.156 | **+103%** |
 | Key-fact accuracy | 9.3% | 22.3% | **+13pp** |
 
-**The bare model doesn't know NemoClaw exists.**
+> phi4-mini and nemotron-mini truncate at ~2,050 tokens. The CKG is 6,837 tokens — only 30% is loading. Prereq-chain F1 still doubles on that fraction. Full-context models widen the gap further.
 
+**L01 — lookup:**
 ```
 Q: What are the three agent runtimes in NemoClaw?
-
-✗ Bare:  "NemoClaw supports TensorFlow, PyTorch, and ONNX Runtime..."
-         [invented from general ML knowledge]
-
-✓ CKG:   "OpenClaw (default), Hermes (NEMOCLAW_AGENT=hermes),
-          LangChain Deep Agents (NEMOCLAW_AGENT=dcode)"
-         [declared edges, correct]
+✗ Bare: "NemoClaw supports TensorFlow, PyTorch, and ONNX Runtime..." [invented]
+✓ CKG:  "OpenClaw (default), Hermes (NEMOCLAW_AGENT=hermes),
+         LangChain Deep Agents (NEMOCLAW_AGENT=dcode)" [declared edges, correct]
 ```
 
+**P08 — prereq-chain (best Δ +0.261):**
 ```
 Q: How does CorporateCA integrate into NemoClaw's security chain?
-
-✗ Bare:  "CorporateCA, a cloud-native IAM solution from NVIDIA, can be
-          integrated to enhance security posture..."
-         [hallucinated — CorporateCA is not an NVIDIA IAM product]
-
-✓ CKG:   "CorporateCA is anchored at the image build stage for TLS
-          interception proxy traversal in NemoClaw."
-         [exact mechanism, correct integration point]
+✗ Bare: "CorporateCA, a cloud-native IAM solution from NVIDIA..." [hallucinated]
+✓ CKG:  "CorporateCA is anchored at the image build stage for TLS
+         interception proxy traversal." [exact mechanism, correct]
 ```
 
+**L08 — lookup:**
 ```
 Q: What enterprise manufacturing deployment uses NemoClaw via the FOX Blueprint?
-
-✗ Bare:  "...FOX (Flexible Open-Source Object Tracking) Blueprint..."
-         [invented acronym expansion, no mention of Foxconn]
-
-✓ CKG:   "Foxconn's MoMClaw is a production deployment of the FOX Blueprint."
-         [correct]
+✗ Bare: "FOX (Flexible Open-Source Object Tracking)..." [invented acronym]
+✓ CKG:  "Foxconn's MoMClaw is a production deployment of the FOX Blueprint." [correct]
 ```
 
-**Context window note:** phi4-mini and nemotron-mini truncate at ~2,050 tokens. The NemoClaw CKG is 6,837 tokens — only 30% of the graph is loading. Prereq-chain F1 still doubles on that fraction. Full-context models would widen the gap further.
-
-Full report: `~/projects/ckg-ab-test/results/REPORT_nemoclaw.md`
+Full report: `ckg-ab-test/results/REPORT_nemoclaw.md`
 
 ---
 
 ## Install
 
-```bash
-pip install ckg-nvidia-nemoclaw
-```
-
-## Use as a claude.ai connector (remote, no install)
+**Add to claude.ai (no install required):**
 
 ```
 https://ckg-nvidia-nemoclaw.onrender.com/mcp
 ```
 
-## Use locally — Claude Desktop / Claude Code
+Settings → Connectors → Add connector → paste URL.
+
+**Local — Claude Desktop / Claude Code:**
 
 ```bash
+pip install ckg-nvidia-nemoclaw
+# or
 uvx ckg-nvidia-nemoclaw
 ```
-
-Claude Desktop config:
 
 ```json
 {
@@ -258,17 +237,48 @@ Claude Desktop config:
 
 | Layer | Concepts |
 |-------|----------|
-| **Agent runtimes** | OpenClaw · Hermes (Nous Research) · LangChain Deep Agents Code |
-| **Platform** | OpenShell · NVIDIA Agent Toolkit · OpenShell TUI · CLI |
-| **Inference** | inference.local routing · SharedGateway · vLLM · Ollama · Local NIM · ModelRouter |
-| **Policy** | NetworkPolicy · PolicyTier (Restricted/Balanced/Open) · PolicyPreset bundles |
-| **Security** | L7 proxy · Landlock LSM · CONNECT proxy · Corporate CA · SecurityHardening |
-| **Agent features** | Progressive Tool Disclosure · Context Compaction · Agent Heartbeat · Snapshots · Shields |
-| **Configuration** | NemoClaw Blueprint · Declarative Multi-Agent Manifest · Managed MCP Servers · Skills · Plugins |
-| **Deployment** | Local CLI · Brev CLI · Brev Web UI · DGX Spark · DGX Station · macOS Apple Silicon · WSL2 |
-| **Ecosystem** | FOX Blueprint · MoMClaw (Foxconn) · Nemotron 3 Ultra · Agent Harness · LKG Installer |
+| Agent runtimes | OpenClaw · Hermes (Nous Research) · LangChain Deep Agents |
+| Platform | OpenShell · NVIDIA Agent Toolkit · OpenShell TUI · CLI |
+| Inference | SharedGateway · vLLM · Ollama · NIM Local · ModelRouter |
+| Policy | NetworkPolicy · PolicyTier (Restricted/Balanced/Open) · PolicyPreset · Telegram · Discord · Slack |
+| Security | L7Proxy · Landlock LSM · CONNECT Proxy · CorporateCA · SecurityHardening · Sandbox |
+| Agent features | Progressive Tool Disclosure · Context Compaction · Heartbeat · Snapshots · Shields |
+| Deployment | DGX Spark · DGX Station · macOS Apple Silicon · WSL2 · Brev |
+| Ecosystem | FOX Blueprint · MoMClaw (Foxconn) · Nemotron 3 Ultra · Agent Harness |
 
-Every concept maps to a source URL at `docs.nvidia.com/nemoclaw/latest/`. Built from official NemoClaw docs, the FOX Blueprint, and the Nemotron 3 Ultra ecosystem.
+Every node traces to a source at `docs.nvidia.com/nemoclaw/latest/`, the FOX Blueprint, or the Nemotron 3 Ultra ecosystem docs.
+
+---
+
+## Community pulse
+
+123 open GitHub issues · [HN 47427027](https://news.ycombinator.com/item?id=47427027) · [HN 47435066](https://news.ycombinator.com/item?id=47435066)
+
+- **#7084** — Hermes shows ready but tool calls silently fail ("phantom-ready") · async state between OpenShell and agent runtime not synchronized
+- **#360** (47↑) — "Can I run local with no API key?" · `inference.local` requires NVIDIA API key even in offline mode
+- **#1832** — Multi-sandbox SharedGateway conflicts · two sandbox containers claim the same InferenceProvider slot
+- **#2991** — Context window fills after ~12 tool calls in OpenClaw · no auto-compaction
+- **#5133** — PolicyPreset Telegram/Discord integration underdocumented
+
+---
+
+## Sources
+
+Every node and edge traces to one of these. No probabilistic inference — declared relationships only.
+
+| Type | Source | Coverage |
+|------|--------|----------|
+| Official | `docs.nvidia.com/nemoclaw/latest/` | Core platform — agent runtimes, OpenShell, security, inference routing, policy |
+| Official | FOX Blueprint docs | MoMClaw (Foxconn) manufacturing deployment, enterprise patterns |
+| Official | Nemotron 3 Ultra ecosystem | DGX Spark/Station, ModelRouter, NIM Local integration |
+| Official | Security hardening guide | LandlockLSM, L7Proxy, CorporateCA, CONNECT Proxy, Sandbox chain |
+| Official | Managed MCP Server docs | ManagedMCPServer, NetworkPolicy, PolicyTier, PolicyPreset, messaging bindings |
+| Official | Agent features reference | ProgressiveToolDisclosure, Context Compaction, Heartbeat, Snapshots, Shields |
+| Community | [github.com/Yarmoluk/ckg-nvidia-nemoclaw/issues](https://github.com/Yarmoluk/ckg-nvidia-nemoclaw/issues) | 123 issues — phantom-ready, local API key, SharedGateway conflicts |
+| Community | [HN 47427027](https://news.ycombinator.com/item?id=47427027) · [HN 47435066](https://news.ycombinator.com/item?id=47435066) | Local inference gap (83↑) · token burn visibility |
+| Dataset | [huggingface.co/datasets/danyarm/ckg-benchmark](https://huggingface.co/datasets/danyarm/ckg-benchmark) | KRB v0.6.2 — 7,928 queries, 30 NemoClaw-domain questions |
+| Benchmark | [github.com/Yarmoluk/ckg-benchmark/paper/main.pdf](https://github.com/Yarmoluk/ckg-benchmark/blob/main/paper/main.pdf) | Full methodology, F1 0.471, RAG/GraphRAG baselines |
+| A/B report | `ckg-ab-test/results/REPORT_nemoclaw.md` | 30-question NemoClaw run · phi4-mini + nemotron-mini · CPU |
 
 ---
 
@@ -276,16 +286,28 @@ Every concept maps to a source URL at `docs.nvidia.com/nemoclaw/latest/`. Built 
 
 | System | Macro F1 | Mean tokens | Cost / 1k queries |
 |--------|----------|-------------|-------------------|
-| CKG | **0.471** | 269 | $7.81 |
+| **CKG** | **0.471** | 269 | $7.81 |
 | RAG | 0.123 | 2,982 | $76.23 |
 | GraphRAG | 0.120 | ~3,000 | ~$76 |
 
-7,928 queries · 5-hop F1: 0.772 (CKG) vs 0.170 (RAG)
+7,928 queries · 5-hop F1: 0.772 (CKG) vs 0.170 (RAG) · dataset: [huggingface.co/datasets/danyarm/ckg-benchmark](https://huggingface.co/datasets/danyarm/ckg-benchmark) · [full paper](https://github.com/Yarmoluk/ckg-benchmark/blob/main/paper/main.pdf)
 
-Dataset is public: [huggingface.co/datasets/danyarm/ckg-benchmark](https://huggingface.co/datasets/danyarm/ckg-benchmark). Run it yourself.
+---
 
-[Full benchmark paper →](https://github.com/Yarmoluk/ckg-benchmark/blob/main/paper/main.pdf)
+## EVAL
+
+```
+benchmark: ckg-benchmark v0.6.2
+dataset: huggingface.co/datasets/danyarm/ckg-benchmark
+benchmarked: false
+rag_baseline_f1: 0.123
+graphrag_baseline_f1: 0.120
+mean_tokens: 269
+paper: github.com/Yarmoluk/ckg-benchmark/blob/main/paper/main.pdf
+```
 
 ---
 
 Built by [Graphify.md](https://graphifymd.com) · [PyPI](https://pypi.org/project/ckg-nvidia-nemoclaw/) · patent pending
+
+*Community-built. Not affiliated with, endorsed by, or sponsored by NVIDIA Corporation. NemoClaw is a trademark of NVIDIA Corporation. All referenced trademarks belong to their respective owners.*
