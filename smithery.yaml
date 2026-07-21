@@ -1,4 +1,4 @@
-logo: assets/logo.png
+logo: https://raw.githubusercontent.com/Yarmoluk/ckg-nvidia-nemoclaw/main/assets/logo.png
 
 startCommand:
   type: stdio
