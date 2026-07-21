@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ckg-nvidia-nemoclaw"
-version = "0.3.0"
+version = "0.4.0"
 description = "NVIDIA NemoClaw as a traversable knowledge graph — sandboxed AI agent infrastructure, OpenShell runtime, inference routing, and network policy — MCP-native"
 readme = "README.md"
 license = { text = "MIT" }
