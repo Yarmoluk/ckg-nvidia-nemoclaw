@@ -21,6 +21,8 @@ pip install ckg-nvidia-nemoclaw
 [![KRB v0.6.2](https://img.shields.io/badge/benchmark-KRB_v0.6.2-13201c)](https://github.com/Yarmoluk/ckg-benchmark/blob/main/paper/main.pdf)
 [![Built by Graphify.md](https://img.shields.io/badge/built_by-Graphify.md-0f6e56)](https://graphifymd.com)
 
+**[→ Interactive README with live graph](https://yarmoluk.github.io/ckg-nvidia-nemoclaw)**
+
 [PyPI](https://pypi.org/project/ckg-nvidia-nemoclaw/) · [GitHub](https://github.com/Yarmoluk/ckg-nvidia-nemoclaw) · [Benchmark paper](https://github.com/Yarmoluk/ckg-benchmark/blob/main/paper/main.pdf) · [HuggingFace dataset](https://huggingface.co/datasets/danyarm/ckg-benchmark) · [MCP connector URL](https://ckg-nvidia-nemoclaw.onrender.com/mcp) · [HN 47427027](https://news.ycombinator.com/item?id=47427027) · [HN 47435066](https://news.ycombinator.com/item?id=47435066) · [graphifymd.com](https://graphifymd.com) · [Pro · 97 domains](https://graphifymd.com/pro/) · [Benchmark](https://graphifymd.com/benchmark)
 
 </div>
