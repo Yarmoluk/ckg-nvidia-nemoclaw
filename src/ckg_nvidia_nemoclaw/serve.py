@@ -109,6 +109,7 @@ def main():
     port = int(os.environ.get("PORT", port))
 
     from starlette.applications import Starlette
+    from starlette.middleware.base import BaseHTTPMiddleware
     from starlette.requests import Request
     from starlette.responses import HTMLResponse, JSONResponse
     from starlette.routing import Mount, Route
@@ -133,14 +134,19 @@ def main():
 
     mcp_app = mcp.streamable_http_app()
 
-    app = Starlette(
-        routes=[
-            Route("/", homepage),
-            Route("/.well-known/mcp/server-card.json", server_card),
-            Mount("/mcp", app=mcp_app),
-        ],
-        redirect_slashes=False,
-    )
+    app = Starlette(routes=[
+        Route("/", homepage),
+        Route("/.well-known/mcp/server-card.json", server_card),
+        Mount("/mcp", app=mcp_app),
+    ])
+
+    class StripTrailingSlash(BaseHTTPMiddleware):
+        async def dispatch(self, request, call_next):
+            if request.scope["path"] != "/" and request.scope["path"].endswith("/"):
+                request.scope["path"] = request.scope["path"].rstrip("/")
+            return await call_next(request)
+
+    app.add_middleware(StripTrailingSlash)
 
     uvicorn.run(app, host="0.0.0.0", port=port)
 
