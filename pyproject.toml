@@ -4,10 +4,10 @@ build-backend = "hatchling.build"
 
 [project]
 name = "ckg-nvidia-nemoclaw"
-version = "0.5.0"
-description = "NVIDIA NemoClaw as a traversable knowledge graph — sandboxed AI agent infrastructure, OpenShell runtime, inference routing, and network policy — MCP-native · GuardrailDecisionV1 source provenance"
+version = "0.5.1"
+description = "Auditable knowledge graph for NVIDIA NemoClaw with cryptographic source traceability — deterministic agent answers, MCP-native, 11× fewer tokens than RAG"
 readme = "README.md"
-license = { text = "MIT" }
+license = { text = "Elastic-2.0" }
 authors = [{ name = "Daniel Yarmoluk", email = "daniel.yarmoluk@gmail.com" }]
 keywords = [
     "nvidia", "nemoclaw", "openclaw", "hermes", "openshell",

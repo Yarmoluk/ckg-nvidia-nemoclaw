@@ -4,7 +4,7 @@
 
 # ckg-nvidia-nemoclaw
 
-**Graphify.md is a community-built knowledge graph for NemoClaw, designed for platform engineers, agent developers, and docs teams who need deterministic answers about dependencies, runtimes, policy, and deployment paths.** Every result traces to a declared edge and authoritative source — not model inference.
+**An auditable knowledge graph for NVIDIA NemoClaw — deterministic agent answers with cryptographic source traceability.** Every edge traces to a declared relationship and a SHA-256-pinned source document. Built for platform engineers, agent developers, and docs teams who need verifiable answers about dependencies, runtimes, policy, and deployment paths — not model inference.
 
 > Not a general-purpose semantic search layer — if it's not a declared edge, the graph doesn't return it.
 
@@ -16,7 +16,7 @@ pip install ckg-nvidia-nemoclaw
 
 [![PyPI version](https://img.shields.io/pypi/v/ckg-nvidia-nemoclaw?color=0f6e56&label=PyPI)](https://pypi.org/project/ckg-nvidia-nemoclaw/)
 [![Python](https://img.shields.io/pypi/pyversions/ckg-nvidia-nemoclaw?color=0f6e56)](https://pypi.org/project/ckg-nvidia-nemoclaw/)
-[![License: MIT](https://img.shields.io/badge/license-MIT-0f6e56)](LICENSE)
+[![License: ELv2](https://img.shields.io/badge/license-ELv2-0f6e56)](LICENSE)
 [![F1: 0.471 · 4× RAG](https://img.shields.io/badge/F1-0.471_%C2%B74%C3%97_RAG-0f6e56)](https://github.com/Yarmoluk/ckg-benchmark/blob/main/paper/main.pdf)
 [![KRB v0.6.2](https://img.shields.io/badge/benchmark-KRB_v0.6.2-13201c)](https://github.com/Yarmoluk/ckg-benchmark/blob/main/paper/main.pdf)
 [![Built by Graphify.md](https://img.shields.io/badge/built_by-Graphify.md-0f6e56)](https://graphifymd.com)
@@ -341,6 +341,20 @@ graphrag_baseline_f1: 0.120
 mean_tokens: 269
 paper: github.com/Yarmoluk/ckg-benchmark/blob/main/paper/main.pdf
 ```
+
+---
+
+## Licensing
+
+| Layer | License | What it means |
+|-------|---------|---------------|
+| **Server code** — `server.py`, `graph.py`, `serve.py`, `scripts/` | MIT ([LICENSE-CODE](LICENSE-CODE)) | Use, fork, embed, modify freely — no restrictions |
+| **Graph data** — `domains/nemoclaw.csv` | Elastic License 2.0 ([LICENSE](LICENSE)) | Free for any internal or commercial use; you may not resell this graph as a hosted/managed service |
+| **Extraction pipeline + benchmark** | Proprietary — Graphify.md | Not in this repo |
+
+**Can I use this in my product or agent?** Yes — no restrictions.
+**Can I build a competing "NemoClaw CKG as a Service"?** No — that's what ELv2 blocks.
+**Can I fork the server code and build my own CKG?** Yes — the code is MIT.
 
 ---
 
