@@ -1,8 +1,5 @@
 MIT License
 
-The server code in this repository — server.py, graph.py, serve.py,
-__init__.py, __main__.py, and scripts/ — is released under MIT.
-
 Copyright (c) 2026 Daniel Yarmoluk / Graphify.md
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -22,8 +19,3 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
-
----
-
-The graph data files (src/ckg_nvidia_nemoclaw/domains/*.csv) are licensed
-under the Elastic License 2.0. See LICENSE for terms.
