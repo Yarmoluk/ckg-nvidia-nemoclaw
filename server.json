@@ -1,0 +1,22 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.Yarmoluk/ckg-nvidia-nemoclaw",
+  "title": "NVIDIA NeMo Curator + LLaWA CKG",
+  "description": "NVIDIA NeMo Curator + LLaWA knowledge graphs — 55 nodes, data curation pipelines. MCP-native.",
+  "repository": {
+    "url": "https://github.com/Yarmoluk/ckg-nvidia-nemoclaw",
+    "source": "github"
+  },
+  "version": "0.5.6",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "identifier": "ckg-nvidia-nemoclaw",
+      "version": "0.5.6",
+      "transport": {
+        "type": "stdio"
+      },
+      "runtimeHint": "uvx"
+    }
+  ]
+}
