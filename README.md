@@ -14,6 +14,7 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/data-ELv2-0f6e56" alt="Data: ELv2"/></a>
   <a href="LICENSE-CODE"><img src="https://img.shields.io/badge/code-MIT-13201c" alt="Code: MIT"/></a>
   <a href="https://github.com/Yarmoluk/ckg-benchmark/blob/main/paper/main.pdf"><img src="https://img.shields.io/badge/F1-0.471_%C2%B74%C3%97_RAG-0f6e56" alt="F1: 0.471 · 4× RAG"/></a>
+  <a href="https://glama.ai/mcp/servers/Yarmoluk/ckg-nvidia-nemoclaw"><img src="https://glama.ai/mcp/servers/Yarmoluk/ckg-nvidia-nemoclaw/badges/score.svg" alt="ckg-nvidia-nemoclaw MCP server"/></a>
 </p>
 
 **An auditable knowledge graph for NVIDIA NemoClaw — deterministic agent answers with cryptographic source traceability.**
