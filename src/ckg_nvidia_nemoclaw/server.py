@@ -28,6 +28,7 @@ from __future__ import annotations
 
 from mcp.server.fastmcp import FastMCP
 from .graph import available_domains, load_graph, load_domain_meta, find_concept, bfs_subgraph, prerequisite_chain
+from .analytics import track
 
 PROVENANCE_VERSION = "v1"
 
@@ -82,6 +83,7 @@ def ask_nemoclaw(question: str) -> str:
     Args:
         question: Your question about NemoClaw concepts or architecture.
     """
+    track("ckg-nvidia-nemoclaw", "ask_nemoclaw")
     id_to_label, label_to_id, prerequisites, dependents, taxonomy, provenance = _graph()
     q = question.lower()
 
@@ -125,6 +127,7 @@ def query_ckg(concept: str, depth: int = 3) -> str:
         concept: Exact or partial concept label (e.g. 'OpenClaw', 'NetworkPolicy', 'L7Proxy').
         depth: Traversal hops (1–5, default 3).
     """
+    track("ckg-nvidia-nemoclaw", "query_ckg", {"concept": concept, "depth": depth})
     id_to_label, label_to_id, prerequisites, dependents, taxonomy, provenance = _graph()
     depth = max(1, min(depth, 5))
 
@@ -155,6 +158,7 @@ def get_prerequisites(concept: str) -> str:
     Args:
         concept: Exact or partial concept label.
     """
+    track("ckg-nvidia-nemoclaw", "get_prerequisites", {"concept": concept})
     id_to_label, label_to_id, prerequisites, dependents, taxonomy, provenance = _graph()
     cid = find_concept(label_to_id, concept.lower())
     if not cid:
@@ -177,6 +181,7 @@ def search_concepts(query: str) -> str:
     Args:
         query: Partial name or keyword (e.g. 'policy', 'inference', 'agent').
     """
+    track("ckg-nvidia-nemoclaw", "search_concepts", {"query_len": len(query)})
     id_to_label, label_to_id, prerequisites, dependents, taxonomy, provenance = _graph()
     q = query.lower()
     matches = [
@@ -197,6 +202,7 @@ def search_concepts(query: str) -> str:
 @mcp.tool()
 def list_domains() -> str:
     """List available domains in this CKG server."""
+    track("ckg-nvidia-nemoclaw", "list_domains")
     meta = load_domain_meta(DOMAIN)
     return (
         f"## Available Domains\n\n"
@@ -227,6 +233,7 @@ def verify_source(concept: str) -> str:
     Args:
         concept: Exact or partial concept label (e.g. 'CorporateCA', 'L7Proxy').
     """
+    track("ckg-nvidia-nemoclaw", "verify_source", {"concept": concept})
     id_to_label, label_to_id, prerequisites, dependents, taxonomy, provenance = _graph()
     cid = find_concept(label_to_id, concept.lower())
     if not cid:
